@@ -1,0 +1,37 @@
+{
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "extends": ["function-happy"],
+  "plugins": [
+    "react",
+    "react-native"
+  ],
+  "rules": {
+    "no-return-assign": 0,
+    "generator-star-spacing": 0,
+    
+    "react/no-danger": 2,
+    "react/no-deprecated": 2,
+    "react/no-is-mounted": 2,
+    "react/no-multi-comp": 2,
+    "react/no-string-refs": 2,
+    "react/prop-types": 2,
+    "react/prefer-stateless-function": 2,
+    "react/jsx-key": 2,
+    "react/jsx-uses-react": 2,
+    "react/jsx-uses-vars": 2,
+    "react/jsx-no-duplicate-props": 2,
+    "react/jsx-closing-bracket-location": 2,
+    "react/require-render-return": 2,
+    "react/wrap-multilines": 2,
+    
+    "react-native/no-unused-styles": 2,
+    "react-native/split-platform-components": 2,
+    "react-native/no-inline-styles": 2,
+    "react-native/no-color-literals": 2
+  }
+}
