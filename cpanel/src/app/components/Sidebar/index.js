@@ -6,10 +6,10 @@ class Sidebar extends Component {
       <div className="sidebar">
         <ul id="categories">
           <li>
-            <a href='products'>Products</a>
+            <a href='/'>Products</a>
           </li>
           <li>
-            <a href='#'>Categories</a>
+            <a href='categories'>Categories</a>
           </li>
           <li>
             <a href='#'>Orders</a>

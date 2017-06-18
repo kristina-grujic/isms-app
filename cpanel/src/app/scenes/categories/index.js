@@ -2,35 +2,33 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
-  getProducts,
-} from '../../actions/products';
+  getCategories,
+} from '../../actions/categories';
 
-class Products extends Component {
+class Categories extends Component {
   componentDidMount() {
-    this.props.getProducts();
+    this.props.getCategories();
   }
 
   render() {
     return (
       <div className="cards">
-        <h3>Products</h3>
+        <h3>Categories</h3>
         <div className="button add-button"
         >
-          <h3>Add product</h3>
+          <h3>Add category</h3>
         </div>
         <table className="list-table">
           <tbody>
             <tr>
               <th>Name</th>
-              <th>Category</th>
               <th></th>
             </tr>
             {
-              this.props.products.map((product) => {
+              this.props.categories.map((category) => {
                 return (
-                  <tr key={product.id}>
-                    <td>{product.name}</td>
-                    <td>{product.category.name}</td>
+                  <tr key={category.id}>
+                    <td>{category.name}</td>
                     <td style={{float: 'right'}}>
                       <button>Edit</button>
                       <button>Delete</button>
@@ -48,14 +46,14 @@ class Products extends Component {
 
 function stateToProps(state) {
   return {
-    products: state.products.products,
+    categories: state.categories.categories,
   };
 }
 
 function dispatchToProps(dispatch) {
   return bindActionCreators({
-    getProducts,
+    getCategories,
   }, dispatch)
 }
 
-export default connect(stateToProps, dispatchToProps)(Products)
+export default connect(stateToProps, dispatchToProps)(Categories)

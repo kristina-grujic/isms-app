@@ -1,6 +1,53 @@
 .cards {
-  margin-top: 60px;
+  margin-top: 80px;
   margin-left: 300px;
+}
+
+.list-table {
+  padding: 20px;
+  width: 90%;
+  margin: auto;
+}
+
+.list-table td {
+  margin: 2px;
+  padding: 10px;
+}
+
+.list-table th {
+  margin: 2px;
+  padding: 10px;
+  color: white;
+}
+
+.add-button {
+  float: right;
+  margin: 20px;
+  width: 120px !important;
+}
+
+.list-table button {
+  background: lightseagreen;
+  opacity: 0.8;
+  color: white;
+  border-radius: 3px;
+  height: 30px;
+  width: 60px;
+  margin: 5px;
+}
+
+.list-table button:hover {
+  background-color: salmon;
+}
+
+.list-table tr:first-child {
+  margin: 3px;
+  background-color: lightseagreen;
+  border: 0.5px solid lightseagreen;
+}
+
+.list-table tr:nth-child(even) {
+  background-color: rgba(255,255,255,0.6);
 }
 
 .login-container {
