@@ -3,6 +3,10 @@
   margin-left: 300px;
 }
 
+.wide-button {
+  width: 150px !important;
+}
+
 .list-table {
   padding: 20px;
   width: 90%;

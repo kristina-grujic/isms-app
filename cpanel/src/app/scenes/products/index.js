@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
   getProducts,
+  deleteProduct,
 } from '../../actions/products';
 
 class Products extends Component {
@@ -33,7 +34,19 @@ class Products extends Component {
                     <td>{product.category.name}</td>
                     <td style={{float: 'right'}}>
                       <button>Edit</button>
-                      <button>Delete</button>
+                      <button
+                        onClick={() => {
+                          const result = confirm('Are you sure you want to delete this product?');
+                          if (result) {
+                            this.props.deleteProduct({
+                              productId: product.id,
+                            })
+                          }
+                        }}
+
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 )
@@ -55,6 +68,7 @@ function stateToProps(state) {
 function dispatchToProps(dispatch) {
   return bindActionCreators({
     getProducts,
+    deleteProduct,
   }, dispatch)
 }
 

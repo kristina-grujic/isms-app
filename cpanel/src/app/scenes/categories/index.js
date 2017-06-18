@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
+import { EventEmitter } from 'events';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
   getCategories,
+  deleteCategory,
 } from '../../actions/categories';
+
+import CreateModal from './create';
+import EditModal from './edit';
 
 class Categories extends Component {
   componentDidMount() {
@@ -15,6 +20,7 @@ class Categories extends Component {
       <div className="cards">
         <h3>Categories</h3>
         <div className="button add-button"
+          onClick={() => EventEmitter.prototype.emit('add-category-modal-open')}
         >
           <h3>Add category</h3>
         </div>
@@ -30,8 +36,24 @@ class Categories extends Component {
                   <tr key={category.id}>
                     <td>{category.name}</td>
                     <td style={{float: 'right'}}>
-                      <button>Edit</button>
-                      <button>Delete</button>
+                      <button
+                        onClick={() => EventEmitter.prototype.emit('edit-category-modal-open', category)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => {
+                          const result = confirm('Are you sure you want to delete this category?');
+                          if (result) {
+                            this.props.deleteCategory({
+                              categoryId: category.id,
+                            })
+                          }
+                        }}
+
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 )
@@ -39,6 +61,8 @@ class Categories extends Component {
             }
           </tbody>
         </table>
+        <CreateModal />
+        <EditModal />
       </div>
     )
   }
@@ -53,6 +77,7 @@ function stateToProps(state) {
 function dispatchToProps(dispatch) {
   return bindActionCreators({
     getCategories,
+    deleteCategory,
   }, dispatch)
 }
 

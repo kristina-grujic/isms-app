@@ -55,7 +55,7 @@ export function editCategory(category) {
 }
 
 
-export function deleteCategories(category) {
+export function deleteCategory(category) {
   return (dispatch) => {
     dispatch({ type: actions.DELETE_CATEGORY_START });
     return axios({
