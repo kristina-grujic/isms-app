@@ -1,7 +1,6 @@
 const Sequelize = require('sequelize');
 const { keys } = require('lodash');
 const sequelize = require('../config/sequelize');
-const Category = require('./Category');
 
 const Product = sequelize.define('product', {
   id: {
@@ -48,7 +47,5 @@ const Product = sequelize.define('product', {
     },
   },
 });
-
-Product.belongsTo(Category);
 
 module.exports = Product;

@@ -11,6 +11,7 @@ const Category = sequelize.define('category', {
   },
   name: {
     type: Sequelize.STRING,
+    unique: true,
   },
   createdAt: {
     type: Sequelize.DATE,
@@ -18,9 +19,12 @@ const Category = sequelize.define('category', {
   },
 });
 
-Category.hasOne(Category, { as: 'supercategory', foreignKey: 'id', foreignKeyConstraint: true });
-Category.hasMany(Category, { as: 'subcategories' });
-Category.hasMany(Product, { as: 'products' });
-Category.hasMany(Value, { as: 'values' });
+Category.hasOne(sequelize.models.category, { as: 'supercategory' });
+Category.hasMany(sequelize.models.category, { as: 'subcategories' });
+Category.hasMany(sequelize.models.product, { as: 'products' });
+Category.hasMany(sequelize.models.value, { as: 'values' });
+
+Product.belongsTo(sequelize.models.category);
+Value.belongsTo(sequelize.models.category);
 
 module.exports = Category;

@@ -1,6 +1,5 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../config/sequelize');
-const Category = require('./Category');
 
 const Value = sequelize.define('value', {
   id: {
@@ -31,7 +30,5 @@ const Value = sequelize.define('value', {
     },
   },
 });
-
-Value.belongsTo(Category);
 
 module.exports = Value;
