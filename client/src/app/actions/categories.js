@@ -2,15 +2,12 @@ import axios from 'axios';
 import * as actions from '../data/categories';
 import { apiEndpoint } from '../config';
 
-export function getCategories(query='') {
+export function getCategories() {
   return (dispatch) => {
     dispatch({ type: actions.GET_CATEGORIES_START });
     return axios({
-      url: `${apiEndpoint}/products`,
-      method: 'get',
-      params: {
-        query,
-      }
+      url: `${apiEndpoint}/categories`,
+      method: 'get'
     })
       .then((response) => {
         dispatch({ type: actions.GET_CATEGORIES_SUCCESS, response: response.data });

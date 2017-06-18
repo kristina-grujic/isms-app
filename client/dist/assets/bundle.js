@@ -56556,16 +56556,11 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function getCategories() {
-	  var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-
 	  return function (dispatch) {
 	    dispatch({ type: actions.GET_CATEGORIES_START });
 	    return (0, _axios2.default)({
-	      url: _config.apiEndpoint + '/products',
-	      method: 'get',
-	      params: {
-	        query: query
-	      }
+	      url: _config.apiEndpoint + '/categories',
+	      method: 'get'
 	    }).then(function (response) {
 	      dispatch({ type: actions.GET_CATEGORIES_SUCCESS, response: response.data });
 	    }).catch(function (response) {
