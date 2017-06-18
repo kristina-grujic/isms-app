@@ -52253,6 +52253,10 @@
 	var USER_LOGIN_SUCCESS = exports.USER_LOGIN_SUCCESS = "USER_LOGIN_SUCCESS";
 	var USER_LOGIN_ERROR = exports.USER_LOGIN_ERROR = "USER_LOGIN_ERROR";
 
+	var USER_REGISTER_START = exports.USER_REGISTER_START = "USER_REGISTER_START";
+	var USER_REGISTER_SUCCESS = exports.USER_REGISTER_SUCCESS = "USER_REGISTER_SUCCESS";
+	var USER_REGISTER_ERROR = exports.USER_REGISTER_ERROR = "USER_REGISTER_ERROR";
+
 /***/ },
 /* 289 */
 /***/ function(module, exports, __webpack_require__) {
@@ -52285,9 +52289,11 @@
 
 	var _index8 = _interopRequireDefault(_index7);
 
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	var _index9 = __webpack_require__(336);
 
-	// <Route path="sign_up" component={SignUp} />
+	var _index10 = _interopRequireDefault(_index9);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	module.exports = _react2.default.createElement(
 	  _reactRouter.Route,
@@ -52297,7 +52303,8 @@
 	  _react2.default.createElement(_reactRouter.IndexRoute, { component: _index2.default }),
 	  _react2.default.createElement(_reactRouter.Route, { path: 'product', component: _index4.default }),
 	  _react2.default.createElement(_reactRouter.Route, { path: 'cart', component: _index6.default }),
-	  _react2.default.createElement(_reactRouter.Route, { path: 'login', component: _index8.default })
+	  _react2.default.createElement(_reactRouter.Route, { path: 'login', component: _index8.default }),
+	  _react2.default.createElement(_reactRouter.Route, { path: 'sign_up', component: _index10.default })
 	);
 
 /***/ },
@@ -52348,21 +52355,41 @@
 	  _createClass(Layout, [{
 	    key: 'render',
 	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(_Header2.default, { location: this.props.location,
-	          router: this.props.router
-	        }),
-	        _react2.default.createElement(_Sidebar2.default, { location: this.props.location,
-	          router: this.props.router
-	        }),
-	        _react2.default.createElement(
-	          'div',
-	          null,
-	          this.props.children
-	        )
-	      );
+	      var path = this.props.location.pathname;
+	      switch (path) {
+	        case '/login':
+	        case 'login':
+	        case 'sign_up':
+	        case '/sign_up':
+	          {
+	            return _react2.default.createElement(
+	              'div',
+	              null,
+	              _react2.default.createElement(_Header2.default, { location: this.props.location,
+	                router: this.props.router
+	              }),
+	              this.props.children
+	            );
+	          }
+	        default:
+	          {
+	            return _react2.default.createElement(
+	              'div',
+	              null,
+	              _react2.default.createElement(_Header2.default, { location: this.props.location,
+	                router: this.props.router
+	              }),
+	              _react2.default.createElement(_Sidebar2.default, { location: this.props.location,
+	                router: this.props.router
+	              }),
+	              _react2.default.createElement(
+	                'div',
+	                null,
+	                this.props.children
+	              )
+	            );
+	          }
+	      }
 	    }
 	  }]);
 
@@ -52420,6 +52447,7 @@
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
 	      this.me = localStorage.getItem('current_user');
+	      this.forceUpdate();
 	    }
 	  }, {
 	    key: 'render',
@@ -52453,7 +52481,7 @@
 	              _Button2.default,
 	              {
 	                onClick: function onClick() {
-	                  return _this2.props.router.push('login');
+	                  return _this2.props.router.push('/login');
 	                }
 	              },
 	              'Login'
@@ -52464,7 +52492,11 @@
 	              'Profile'
 	            ) : _react2.default.createElement(
 	              _Button2.default,
-	              null,
+	              {
+	                onClick: function onClick() {
+	                  return _this2.props.router.push('/sign_up');
+	                }
+	              },
 	              'Sign up'
 	            )
 	          )
@@ -57101,7 +57133,7 @@
 	          alert('Invalid username or password');
 	          return;
 	        }
-	        _this2.props.router.replace('/');
+	        window.location = '/';
 	      });
 	    }
 	  }, {
@@ -57111,13 +57143,9 @@
 
 	      return _react2.default.createElement(
 	        'div',
-	        { className: 'cards' },
-	        _react2.default.createElement(
-	          'h3',
-	          null,
-	          'Welcome to webshop control panel'
-	        ),
+	        { className: 'login-container' },
 	        _react2.default.createElement('input', {
+	          placeholder: 'Email',
 	          onChange: function onChange(e) {
 	            return _this3.setState({ email: e.target.value });
 	          },
@@ -57125,6 +57153,7 @@
 	          value: this.state.email
 	        }),
 	        _react2.default.createElement('input', {
+	          placeholder: 'Password',
 	          onChange: function onChange(e) {
 	            return _this3.setState({ password: e.target.value });
 	          },
@@ -57169,6 +57198,7 @@
 	  value: true
 	});
 	exports.login = login;
+	exports.sign_up = sign_up;
 
 	var _axios = __webpack_require__(295);
 
@@ -57192,12 +57222,167 @@
 	      method: 'post',
 	      data: request
 	    }).then(function (response) {
+	      localStorage.setItem('token', response.data.token);
+	      localStorage.setItem('current_user', JSON.stringify(response.data.data));
 	      dispatch({ type: actions.USER_LOGIN_SUCCESS, response: response.data });
 	    }).catch(function (error) {
 	      dispatch({ type: actions.USER_LOGIN_ERROR, error: error });
 	    });
 	  };
 	}
+
+	function sign_up(request) {
+	  return function (dispatch) {
+	    dispatch({ type: actions.USER_REGISTER_START });
+	    return (0, _axios2.default)({
+	      url: _config.apiEndpoint + '/register',
+	      method: 'post',
+	      data: request
+	    }).then(function (response) {
+	      dispatch({ type: actions.USER_REGISTER_SUCCESS, response: response.data });
+	    }).catch(function (error) {
+	      dispatch({ type: actions.USER_REGISTER_ERROR, error: error });
+	    });
+	  };
+	}
+
+/***/ },
+/* 336 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(242);
+
+	var _redux = __webpack_require__(251);
+
+	var _auth = __webpack_require__(335);
+
+	var _Button = __webpack_require__(292);
+
+	var _Button2 = _interopRequireDefault(_Button);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Signup = function (_Component) {
+	  _inherits(Signup, _Component);
+
+	  function Signup() {
+	    _classCallCheck(this, Signup);
+
+	    var _this = _possibleConstructorReturn(this, (Signup.__proto__ || Object.getPrototypeOf(Signup)).call(this));
+
+	    _this.state = {
+	      name: '',
+	      email: '',
+	      password: ''
+	    };
+	    _this.signup = _this.signup.bind(_this);
+	    return _this;
+	  }
+
+	  _createClass(Signup, [{
+	    key: 'signup',
+	    value: function signup() {
+	      var _this2 = this;
+
+	      var _state = this.state,
+	          name = _state.name,
+	          email = _state.email,
+	          password = _state.password;
+
+	      if (!name || !email || !password) {
+	        alert('Name, email and password are required!');
+	        return;
+	      }
+	      var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	      if (!re.test(email)) {
+	        alert('Email is not valid!');
+	        return;
+	      }
+	      this.props.sign_up(this.state).then(function () {
+	        if (_this2.props.loginError) {
+	          // alert('Invalid username or password');
+	          return;
+	        }
+	        _this2.props.router.replace('/');
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this3 = this;
+
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'login-container' },
+	        _react2.default.createElement('input', {
+	          placeholder: 'Name',
+	          onChange: function onChange(e) {
+	            return _this3.setState({ name: e.target.value });
+	          },
+	          type: 'text',
+	          value: this.state.name
+	        }),
+	        _react2.default.createElement('input', {
+	          placeholder: 'Email',
+	          onChange: function onChange(e) {
+	            return _this3.setState({ email: e.target.value });
+	          },
+	          type: 'email',
+	          value: this.state.email
+	        }),
+	        _react2.default.createElement('input', {
+	          placeholder: 'Password',
+	          onChange: function onChange(e) {
+	            return _this3.setState({ password: e.target.value });
+	          },
+	          type: 'password',
+	          value: this.state.password
+	        }),
+	        _react2.default.createElement(
+	          _Button2.default,
+	          {
+	            onClick: this.signup
+	          },
+	          'Register'
+	        )
+	      );
+	    }
+	  }]);
+
+	  return Signup;
+	}(_react.Component);
+
+	function stateToProps(state) {
+	  return {
+	    signupError: state.auth.signupError
+	  };
+	}
+
+	function dispatchToProps(dispatch) {
+	  return (0, _redux.bindActionCreators)({
+	    sign_up: _auth.sign_up
+	  }, dispatch);
+	}
+
+	exports.default = (0, _reactRedux.connect)(stateToProps, dispatchToProps)(Signup);
 
 /***/ }
 /******/ ]);

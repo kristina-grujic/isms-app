@@ -20,10 +20,6 @@ const User = sequelize.define('user', {
     type: Sequelize.STRING,
     required: true,
   },
-  address: {
-    type: Sequelize.STRING,
-    required: true,
-  },
   createdAt: {
     type: Sequelize.DATE,
     defaultValue: Sequelize.NOW,

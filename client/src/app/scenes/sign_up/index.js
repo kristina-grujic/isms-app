@@ -1,45 +1,58 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { login } from '../../actions/auth';
+import { sign_up } from '../../actions/auth';
 
 import Button from '../../components/Button';
 
-class Login extends Component {
+class Signup extends Component {
   constructor() {
     super();
     this.state = {
+      name: '',
       email: '',
       password: '',
     }
-    this.login = this.login.bind(this);
+    this.signup = this.signup.bind(this);
   }
 
-  login() {
+  signup() {
     const {
+      name,
       email,
       password,
     } = this.state;
-    if (!email || !password) {
-      alert('Username and password are requred to login!');
+    if (!name || !email || !password) {
+      alert('Name, email and password are required!');
       return;
     }
-    this.props.login(this.state)
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!re.test(email)) {
+      alert('Email is not valid!');
+      return;
+    }
+    this.props.sign_up(this.state)
       .then(() => {
         if (this.props.loginError) {
-          alert('Invalid username or password');
+          // alert('Invalid username or password');
           return;
         }
-        window.location = '/';
+        this.props.router.replace('/');
       })
   }
   render() {
     return (
       <div className="login-container">
         <input
+          placeholder="Name"
+          onChange={(e) => this.setState({ name: e.target.value })}
+          type='text'
+          value={this.state.name}
+        />
+        <input
           placeholder="Email"
           onChange={(e) => this.setState({ email: e.target.value })}
-          type='text'
+          type='email'
           value={this.state.email}
         />
         <input
@@ -49,9 +62,9 @@ class Login extends Component {
           value={this.state.password}
         />
         <Button
-          onClick={this.login}
+          onClick={this.signup}
         >
-          Log in
+          Register
         </Button>
       </div>
     )
@@ -60,14 +73,14 @@ class Login extends Component {
 
 function stateToProps(state) {
   return {
-    loginError: state.auth.loginError
+    signupError: state.auth.signupError
   };
 }
 
 function dispatchToProps(dispatch) {
   return bindActionCreators({
-    login,
+    sign_up,
   }, dispatch)
 }
 
-export default connect(stateToProps, dispatchToProps)(Login);
+export default connect(stateToProps, dispatchToProps)(Signup);

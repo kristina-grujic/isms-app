@@ -7,6 +7,7 @@ import FontAwesome from 'react-fontawesome';
 class Header extends Component {
   componentDidMount() {
     this.me = localStorage.getItem('current_user');
+    this.forceUpdate();
   }
 
   render() {
@@ -27,7 +28,7 @@ class Header extends Component {
                 null
                 :
                 <Button
-                  onClick={() => this.props.router.push('login')}
+                  onClick={() => this.props.router.push('/login')}
                 >
                   Login
                 </Button>
@@ -36,7 +37,11 @@ class Header extends Component {
               this.me ?
                 <Button>Profile</Button>
                 :
-                <Button>Sign up</Button>
+                <Button
+                  onClick={() => this.props.router.push('/sign_up')}
+                >
+                  Sign up
+                </Button>
             }
           </div>
         </header>

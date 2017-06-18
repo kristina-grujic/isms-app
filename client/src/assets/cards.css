@@ -3,6 +3,31 @@
   margin-left: 300px;
 }
 
+.login-container {
+  margin-top: 100px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+}
+
+.login-container input {
+  width: 60%;
+  height: 40px;
+  border: 1px solid lightseagreen;
+  padding: 10px;
+  margin: 10px;
+  margin-right: 0px;
+}
+
+.login-container input:focus {
+  color: salmon;
+  border-color: salmon;
+  box-shadow: 0 0 10px salmon;
+  outline: none;
+}
+
 .basket {
   margin: 30px;
 

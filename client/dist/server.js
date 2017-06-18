@@ -63,23 +63,23 @@ module.exports =
 
 	var _routes2 = _interopRequireDefault(_routes);
 
-	var _app = __webpack_require__(28);
+	var _app = __webpack_require__(29);
 
 	var _app2 = _interopRequireDefault(_app);
 
-	var _template = __webpack_require__(37);
+	var _template = __webpack_require__(38);
 
 	var _template2 = _interopRequireDefault(_template);
 
 	var _reactRedux = __webpack_require__(7);
 
-	var _store = __webpack_require__(29);
+	var _store = __webpack_require__(30);
 
 	var _store2 = _interopRequireDefault(_store);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	__webpack_require__(38).config({ path: '../.env' });
+	__webpack_require__(39).config({ path: '../.env' });
 
 
 	var server = (0, _express2.default)();
@@ -169,9 +169,11 @@ module.exports =
 
 	var _index8 = _interopRequireDefault(_index7);
 
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	var _index9 = __webpack_require__(28);
 
-	// <Route path="sign_up" component={SignUp} />
+	var _index10 = _interopRequireDefault(_index9);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	module.exports = _react2.default.createElement(
 	  _reactRouter.Route,
@@ -181,7 +183,8 @@ module.exports =
 	  _react2.default.createElement(_reactRouter.IndexRoute, { component: _index2.default }),
 	  _react2.default.createElement(_reactRouter.Route, { path: 'product', component: _index4.default }),
 	  _react2.default.createElement(_reactRouter.Route, { path: 'cart', component: _index6.default }),
-	  _react2.default.createElement(_reactRouter.Route, { path: 'login', component: _index8.default })
+	  _react2.default.createElement(_reactRouter.Route, { path: 'login', component: _index8.default }),
+	  _react2.default.createElement(_reactRouter.Route, { path: 'sign_up', component: _index10.default })
 	);
 
 /***/ },
@@ -232,21 +235,41 @@ module.exports =
 	  _createClass(Layout, [{
 	    key: 'render',
 	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(_Header2.default, { location: this.props.location,
-	          router: this.props.router
-	        }),
-	        _react2.default.createElement(_Sidebar2.default, { location: this.props.location,
-	          router: this.props.router
-	        }),
-	        _react2.default.createElement(
-	          'div',
-	          null,
-	          this.props.children
-	        )
-	      );
+	      var path = this.props.location.pathname;
+	      switch (path) {
+	        case '/login':
+	        case 'login':
+	        case 'sign_up':
+	        case '/sign_up':
+	          {
+	            return _react2.default.createElement(
+	              'div',
+	              null,
+	              _react2.default.createElement(_Header2.default, { location: this.props.location,
+	                router: this.props.router
+	              }),
+	              this.props.children
+	            );
+	          }
+	        default:
+	          {
+	            return _react2.default.createElement(
+	              'div',
+	              null,
+	              _react2.default.createElement(_Header2.default, { location: this.props.location,
+	                router: this.props.router
+	              }),
+	              _react2.default.createElement(_Sidebar2.default, { location: this.props.location,
+	                router: this.props.router
+	              }),
+	              _react2.default.createElement(
+	                'div',
+	                null,
+	                this.props.children
+	              )
+	            );
+	          }
+	      }
 	    }
 	  }]);
 
@@ -316,6 +339,7 @@ module.exports =
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
 	      this.me = localStorage.getItem('current_user');
+	      this.forceUpdate();
 	    }
 	  }, {
 	    key: 'render',
@@ -349,7 +373,7 @@ module.exports =
 	              _Button2.default,
 	              {
 	                onClick: function onClick() {
-	                  return _this2.props.router.push('login');
+	                  return _this2.props.router.push('/login');
 	                }
 	              },
 	              'Login'
@@ -360,7 +384,11 @@ module.exports =
 	              'Profile'
 	            ) : _react2.default.createElement(
 	              _Button2.default,
-	              null,
+	              {
+	                onClick: function onClick() {
+	                  return _this2.props.router.push('/sign_up');
+	                }
+	              },
 	              'Sign up'
 	            )
 	          )
@@ -1347,7 +1375,7 @@ module.exports =
 	          alert('Invalid username or password');
 	          return;
 	        }
-	        _this2.props.router.replace('/');
+	        window.location = '/';
 	      });
 	    }
 	  }, {
@@ -1357,13 +1385,9 @@ module.exports =
 
 	      return _react2.default.createElement(
 	        'div',
-	        { className: 'cards' },
-	        _react2.default.createElement(
-	          'h3',
-	          null,
-	          'Welcome to webshop control panel'
-	        ),
+	        { className: 'login-container' },
 	        _react2.default.createElement('input', {
+	          placeholder: 'Email',
 	          onChange: function onChange(e) {
 	            return _this3.setState({ email: e.target.value });
 	          },
@@ -1371,6 +1395,7 @@ module.exports =
 	          value: this.state.email
 	        }),
 	        _react2.default.createElement('input', {
+	          placeholder: 'Password',
 	          onChange: function onChange(e) {
 	            return _this3.setState({ password: e.target.value });
 	          },
@@ -1415,6 +1440,7 @@ module.exports =
 	  value: true
 	});
 	exports.login = login;
+	exports.sign_up = sign_up;
 
 	var _axios = __webpack_require__(13);
 
@@ -1438,9 +1464,26 @@ module.exports =
 	      method: 'post',
 	      data: request
 	    }).then(function (response) {
+	      localStorage.setItem('token', response.data.token);
+	      localStorage.setItem('current_user', JSON.stringify(response.data.data));
 	      dispatch({ type: actions.USER_LOGIN_SUCCESS, response: response.data });
 	    }).catch(function (error) {
 	      dispatch({ type: actions.USER_LOGIN_ERROR, error: error });
+	    });
+	  };
+	}
+
+	function sign_up(request) {
+	  return function (dispatch) {
+	    dispatch({ type: actions.USER_REGISTER_START });
+	    return (0, _axios2.default)({
+	      url: _config.apiEndpoint + '/register',
+	      method: 'post',
+	      data: request
+	    }).then(function (response) {
+	      dispatch({ type: actions.USER_REGISTER_SUCCESS, response: response.data });
+	    }).catch(function (error) {
+	      dispatch({ type: actions.USER_REGISTER_ERROR, error: error });
 	    });
 	  };
 	}
@@ -1458,8 +1501,150 @@ module.exports =
 	var USER_LOGIN_SUCCESS = exports.USER_LOGIN_SUCCESS = "USER_LOGIN_SUCCESS";
 	var USER_LOGIN_ERROR = exports.USER_LOGIN_ERROR = "USER_LOGIN_ERROR";
 
+	var USER_REGISTER_START = exports.USER_REGISTER_START = "USER_REGISTER_START";
+	var USER_REGISTER_SUCCESS = exports.USER_REGISTER_SUCCESS = "USER_REGISTER_SUCCESS";
+	var USER_REGISTER_ERROR = exports.USER_REGISTER_ERROR = "USER_REGISTER_ERROR";
+
 /***/ },
 /* 28 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(7);
+
+	var _redux = __webpack_require__(8);
+
+	var _auth = __webpack_require__(26);
+
+	var _Button = __webpack_require__(10);
+
+	var _Button2 = _interopRequireDefault(_Button);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Signup = function (_Component) {
+	  _inherits(Signup, _Component);
+
+	  function Signup() {
+	    _classCallCheck(this, Signup);
+
+	    var _this = _possibleConstructorReturn(this, (Signup.__proto__ || Object.getPrototypeOf(Signup)).call(this));
+
+	    _this.state = {
+	      name: '',
+	      email: '',
+	      password: ''
+	    };
+	    _this.signup = _this.signup.bind(_this);
+	    return _this;
+	  }
+
+	  _createClass(Signup, [{
+	    key: 'signup',
+	    value: function signup() {
+	      var _this2 = this;
+
+	      var _state = this.state,
+	          name = _state.name,
+	          email = _state.email,
+	          password = _state.password;
+
+	      if (!name || !email || !password) {
+	        alert('Name, email and password are required!');
+	        return;
+	      }
+	      var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	      if (!re.test(email)) {
+	        alert('Email is not valid!');
+	        return;
+	      }
+	      this.props.sign_up(this.state).then(function () {
+	        if (_this2.props.loginError) {
+	          // alert('Invalid username or password');
+	          return;
+	        }
+	        _this2.props.router.replace('/');
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this3 = this;
+
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'login-container' },
+	        _react2.default.createElement('input', {
+	          placeholder: 'Name',
+	          onChange: function onChange(e) {
+	            return _this3.setState({ name: e.target.value });
+	          },
+	          type: 'text',
+	          value: this.state.name
+	        }),
+	        _react2.default.createElement('input', {
+	          placeholder: 'Email',
+	          onChange: function onChange(e) {
+	            return _this3.setState({ email: e.target.value });
+	          },
+	          type: 'email',
+	          value: this.state.email
+	        }),
+	        _react2.default.createElement('input', {
+	          placeholder: 'Password',
+	          onChange: function onChange(e) {
+	            return _this3.setState({ password: e.target.value });
+	          },
+	          type: 'password',
+	          value: this.state.password
+	        }),
+	        _react2.default.createElement(
+	          _Button2.default,
+	          {
+	            onClick: this.signup
+	          },
+	          'Register'
+	        )
+	      );
+	    }
+	  }]);
+
+	  return Signup;
+	}(_react.Component);
+
+	function stateToProps(state) {
+	  return {
+	    signupError: state.auth.signupError
+	  };
+	}
+
+	function dispatchToProps(dispatch) {
+	  return (0, _redux.bindActionCreators)({
+	    sign_up: _auth.sign_up
+	  }, dispatch);
+	}
+
+	exports.default = (0, _reactRedux.connect)(stateToProps, dispatchToProps)(Signup);
+
+/***/ },
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1476,7 +1661,7 @@ module.exports =
 
 	var _reactRedux = __webpack_require__(7);
 
-	var _store = __webpack_require__(29);
+	var _store = __webpack_require__(30);
 
 	var _store2 = _interopRequireDefault(_store);
 
@@ -1499,7 +1684,7 @@ module.exports =
 	exports.default = App;
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1510,11 +1695,11 @@ module.exports =
 
 	var _redux = __webpack_require__(8);
 
-	var _reduxThunk = __webpack_require__(30);
+	var _reduxThunk = __webpack_require__(31);
 
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-	var _reducers = __webpack_require__(31);
+	var _reducers = __webpack_require__(32);
 
 	var _reducers2 = _interopRequireDefault(_reducers);
 
@@ -1529,13 +1714,13 @@ module.exports =
 	exports.default = initStore;
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports) {
 
 	module.exports = require("redux-thunk");
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1546,15 +1731,15 @@ module.exports =
 
 	var _redux = __webpack_require__(8);
 
-	var _products = __webpack_require__(32);
+	var _products = __webpack_require__(33);
 
 	var _products2 = _interopRequireDefault(_products);
 
-	var _categories = __webpack_require__(35);
+	var _categories = __webpack_require__(36);
 
 	var _categories2 = _interopRequireDefault(_categories);
 
-	var _auth = __webpack_require__(36);
+	var _auth = __webpack_require__(37);
 
 	var _auth2 = _interopRequireDefault(_auth);
 
@@ -1569,7 +1754,7 @@ module.exports =
 	exports.default = combinedReducer;
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1578,9 +1763,9 @@ module.exports =
 	  value: true
 	});
 
-	var _immutable = __webpack_require__(33);
+	var _immutable = __webpack_require__(34);
 
-	var _lodash = __webpack_require__(34);
+	var _lodash = __webpack_require__(35);
 
 	var _products = __webpack_require__(14);
 
@@ -1620,19 +1805,19 @@ module.exports =
 	exports.default = ProductReducer;
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports) {
 
 	module.exports = require("immutable");
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports) {
 
 	module.exports = require("lodash");
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1641,9 +1826,9 @@ module.exports =
 	  value: true
 	});
 
-	var _immutable = __webpack_require__(33);
+	var _immutable = __webpack_require__(34);
 
-	var _lodash = __webpack_require__(34);
+	var _lodash = __webpack_require__(35);
 
 	var _categories = __webpack_require__(19);
 
@@ -1677,7 +1862,7 @@ module.exports =
 	exports.default = CategoryReducer;
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1686,9 +1871,9 @@ module.exports =
 	  value: true
 	});
 
-	var _immutable = __webpack_require__(33);
+	var _immutable = __webpack_require__(34);
 
-	var _lodash = __webpack_require__(34);
+	var _lodash = __webpack_require__(35);
 
 	var _auth = __webpack_require__(27);
 
@@ -1727,7 +1912,7 @@ module.exports =
 	exports.default = AuthReducer;
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1744,7 +1929,7 @@ module.exports =
 	};
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports) {
 
 	module.exports = require("dotenv");
