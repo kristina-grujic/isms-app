@@ -29,6 +29,7 @@ require('./config/passport')(passport);
 const populateController = require('./controllers/populate');
 const adminController = require('./controllers/admin');
 const usersController = require('./controllers/users');
+const categoriesController = require('./controllers/categories');
 
 /**
  * Create Express server.
@@ -69,7 +70,10 @@ app.post('/populate', populateController.index);
 app.post('/admin_login', adminController.login);
 app.post('/login', usersController.login);
 app.post('/register', usersController.signup);
-
+// categories routes
+app.get('/categories', categoriesController.index);
+app.post('/categories', categoriesController.create);
+app.put('/categories', categoriesController.edit);
 
 app.get('*', (req, res) => {
   res.sendFile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
@@ -82,7 +86,7 @@ app.use(errorHandler());
 /**
  * Start Express server.
  */
-sequelize.sync({ force: true }).then(() => {
+sequelize.sync({ force: false }).then(() => {
   app.listen(app.get('port'), () => {
     console.log('%s App is running at http://localhost:%d in %s mode',
                 chalk.green('✓'),
