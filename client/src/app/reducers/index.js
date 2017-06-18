@@ -1,8 +1,10 @@
 import { combineReducers } from 'redux';
-import example from './example';
+import products from './products';
+import categories from './categories';
 
 const combinedReducer = combineReducers({
-  example,
+  categories,
+  products,
 });
 
 export default combinedReducer;

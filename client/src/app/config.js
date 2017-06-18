@@ -1,7 +1,7 @@
 // what is api endpoint
 
-const main_url = ''
+const apiEndpoint = 'http://localhost:3000';
 
 module.exports = {
-  main_url
+  apiEndpoint
 }

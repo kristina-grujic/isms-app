@@ -63,23 +63,23 @@ module.exports =
 
 	var _routes2 = _interopRequireDefault(_routes);
 
-	var _app = __webpack_require__(19);
+	var _app = __webpack_require__(25);
 
 	var _app2 = _interopRequireDefault(_app);
 
-	var _template = __webpack_require__(26);
+	var _template = __webpack_require__(33);
 
 	var _template2 = _interopRequireDefault(_template);
 
 	var _reactRedux = __webpack_require__(7);
 
-	var _store = __webpack_require__(20);
+	var _store = __webpack_require__(26);
 
 	var _store2 = _interopRequireDefault(_store);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	__webpack_require__(27).config({ path: '../.env' });
+	__webpack_require__(34).config({ path: '../.env' });
 
 
 	var server = (0, _express2.default)();
@@ -153,15 +153,15 @@ module.exports =
 
 	var _Layout2 = _interopRequireDefault(_Layout);
 
-	var _index = __webpack_require__(14);
+	var _index = __webpack_require__(20);
 
 	var _index2 = _interopRequireDefault(_index);
 
-	var _index3 = __webpack_require__(16);
+	var _index3 = __webpack_require__(22);
 
 	var _index4 = _interopRequireDefault(_index3);
 
-	var _index5 = __webpack_require__(17);
+	var _index5 = __webpack_require__(23);
 
 	var _index6 = _interopRequireDefault(_index5);
 
@@ -201,7 +201,7 @@ module.exports =
 
 	var _Header2 = _interopRequireDefault(_Header);
 
-	var _Sidebar = __webpack_require__(13);
+	var _Sidebar = __webpack_require__(17);
 
 	var _Sidebar2 = _interopRequireDefault(_Sidebar);
 
@@ -284,7 +284,7 @@ module.exports =
 
 	var _Searchbox2 = _interopRequireDefault(_Searchbox);
 
-	var _reactFontawesome = __webpack_require__(12);
+	var _reactFontawesome = __webpack_require__(16);
 
 	var _reactFontawesome2 = _interopRequireDefault(_reactFontawesome);
 
@@ -420,7 +420,7 @@ module.exports =
 /* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -431,6 +431,12 @@ module.exports =
 	var _react = __webpack_require__(2);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(7);
+
+	var _redux = __webpack_require__(8);
+
+	var _products = __webpack_require__(12);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -450,12 +456,33 @@ module.exports =
 	  }
 
 	  _createClass(SearchBox, [{
-	    key: "render",
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.props.getProducts();
+	    }
+	  }, {
+	    key: 'componentWillReceiveProps',
+	    value: function componentWillReceiveProps(nextProps) {
+	      if (this.props.query !== nextProps.query) {
+	        this.props = nextProps;
+	        this.props.getProducts(this.props.query);
+	      }
+	    }
+	  }, {
+	    key: 'render',
 	    value: function render() {
+	      var _this2 = this;
+
 	      return _react2.default.createElement(
-	        "div",
-	        { className: "searchbox" },
-	        _react2.default.createElement("input", { type: "text" })
+	        'div',
+	        { className: 'searchbox' },
+	        _react2.default.createElement('input', {
+	          onChange: function onChange(event) {
+	            return _this2.props.setQuery(event.target.value);
+	          },
+	          type: 'text',
+	          value: this.props.query
+	        })
 	      );
 	    }
 	  }]);
@@ -463,16 +490,117 @@ module.exports =
 	  return SearchBox;
 	}(_react.Component);
 
-	exports.default = SearchBox;
+	function stateToProps(state) {
+	  return {
+	    query: state.products.query
+	  };
+	}
+
+	function dispatchToProps(dispatch) {
+	  return (0, _redux.bindActionCreators)({
+	    getProducts: _products.getProducts,
+	    setQuery: _products.setQuery
+	  }, dispatch);
+	}
+
+	exports.default = (0, _reactRedux.connect)(stateToProps, dispatchToProps)(SearchBox);
 
 /***/ },
 /* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.getProducts = getProducts;
+	exports.setQuery = setQuery;
+
+	var _axios = __webpack_require__(13);
+
+	var _axios2 = _interopRequireDefault(_axios);
+
+	var _products = __webpack_require__(14);
+
+	var actions = _interopRequireWildcard(_products);
+
+	var _config = __webpack_require__(15);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function getProducts() {
+	  var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+
+	  return function (dispatch) {
+	    dispatch({ type: actions.GET_PRODUCTS_START });
+	    return (0, _axios2.default)({
+	      url: _config.apiEndpoint + '/products',
+	      method: 'get',
+	      params: {
+	        query: query
+	      }
+	    }).then(function (response) {
+	      dispatch({ type: actions.GET_PRODUCTS_SUCCESS, response: response.data });
+	    }).catch(function (response) {
+	      dispatch({ type: actions.GET_PRODUCTS_ERROR, error: response.error });
+	    });
+	  };
+	}
+
+	function setQuery() {
+	  var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+
+	  return function (dispatch) {
+	    dispatch({ type: actions.SET_PRODUCT_QUERY, query: query });
+	  };
+	}
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	module.exports = require("axios");
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var GET_PRODUCTS_START = exports.GET_PRODUCTS_START = "GET_PRODUCTS_START";
+	var GET_PRODUCTS_SUCCESS = exports.GET_PRODUCTS_SUCCESS = "GET_PRODUCTS_SUCCESS";
+	var GET_PRODUCTS_ERROR = exports.GET_PRODUCTS_ERROR = "GET_PRODUCTS_ERROR";
+
+	var SET_PRODUCT_QUERY = exports.SET_PRODUCT_QUERY = "SET_PRODUCT_QUERY";
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	// what is api endpoint
+
+	var apiEndpoint = 'http://localhost:3000';
+
+	module.exports = {
+	  apiEndpoint: apiEndpoint
+	};
+
+/***/ },
+/* 16 */
 /***/ function(module, exports) {
 
 	module.exports = require("react-fontawesome");
 
 /***/ },
-/* 13 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -486,6 +614,12 @@ module.exports =
 	var _react = __webpack_require__(2);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(7);
+
+	var _redux = __webpack_require__(8);
+
+	var _categories = __webpack_require__(18);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -505,6 +639,11 @@ module.exports =
 	  }
 
 	  _createClass(Sidebar, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.props.getCategories();
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      if (this.props.location.pathname === '/cart') {
@@ -516,96 +655,19 @@ module.exports =
 	        _react2.default.createElement(
 	          'ul',
 	          { id: 'categories' },
-	          _react2.default.createElement(
-	            'li',
-	            null,
-	            _react2.default.createElement(
-	              'a',
-	              { href: '#' },
-	              'Category 1'
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'li',
-	            null,
-	            _react2.default.createElement(
-	              'a',
-	              { href: '#' },
-	              'Category 2'
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'li',
-	            null,
-	            _react2.default.createElement(
-	              'a',
-	              { href: '#' },
-	              'Category 3'
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'li',
-	            null,
-	            _react2.default.createElement(
-	              'a',
-	              { href: '#' },
-	              'Category 4'
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'li',
-	            null,
-	            _react2.default.createElement(
-	              'a',
-	              { href: '#' },
-	              'Category 5'
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'li',
-	            null,
-	            _react2.default.createElement(
-	              'a',
-	              { href: '#' },
-	              'Category 6'
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'li',
-	            null,
-	            _react2.default.createElement(
-	              'a',
-	              { href: '#' },
-	              'Category 7'
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'li',
-	            null,
-	            _react2.default.createElement(
-	              'a',
-	              { href: '#' },
-	              'Category 8'
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'li',
-	            null,
-	            _react2.default.createElement(
-	              'a',
-	              { href: '#' },
-	              'Category 9'
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'li',
-	            null,
-	            _react2.default.createElement(
-	              'a',
-	              { href: '#' },
-	              'Category 10'
-	            )
-	          )
+	          this.props.categories.map(function (category) {
+	            return _react2.default.createElement(
+	              'li',
+	              {
+	                key: category.id
+	              },
+	              _react2.default.createElement(
+	                'a',
+	                { href: '#' },
+	                category.name
+	              )
+	            );
+	          })
 	        )
 	      );
 	    }
@@ -614,10 +676,79 @@ module.exports =
 	  return Sidebar;
 	}(_react.Component);
 
-	exports.default = Sidebar;
+	function stateToProps(state) {
+	  return {
+	    categories: state.categories.categories
+	  };
+	}
+
+	function dispatchToProps(dispatch) {
+	  return (0, _redux.bindActionCreators)({
+	    getCategories: _categories.getCategories
+	  }, dispatch);
+	}
+
+	exports.default = (0, _reactRedux.connect)(stateToProps, dispatchToProps)(Sidebar);
 
 /***/ },
-/* 14 */
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.getCategories = getCategories;
+
+	var _axios = __webpack_require__(13);
+
+	var _axios2 = _interopRequireDefault(_axios);
+
+	var _categories = __webpack_require__(19);
+
+	var actions = _interopRequireWildcard(_categories);
+
+	var _config = __webpack_require__(15);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function getCategories() {
+	  var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+
+	  return function (dispatch) {
+	    dispatch({ type: actions.GET_CATEGORIES_START });
+	    return (0, _axios2.default)({
+	      url: _config.apiEndpoint + '/products',
+	      method: 'get',
+	      params: {
+	        query: query
+	      }
+	    }).then(function (response) {
+	      dispatch({ type: actions.GET_CATEGORIES_SUCCESS, response: response.data });
+	    }).catch(function (response) {
+	      dispatch({ type: actions.GET_CATEGORIES_ERROR, error: response.error });
+	    });
+	  };
+	}
+
+/***/ },
+/* 19 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var GET_CATEGORIES_START = exports.GET_CATEGORIES_START = "GET_CATEGORIES_START";
+	var GET_CATEGORIES_SUCCESS = exports.GET_CATEGORIES_SUCCESS = "GET_CATEGORIES_SUCCESS";
+	var GET_CATEGORIES_ERROR = exports.GET_CATEGORIES_ERROR = "GET_CATEGORIES_ERROR";
+
+/***/ },
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -634,7 +765,7 @@ module.exports =
 
 	var _reactRedux = __webpack_require__(7);
 
-	var _Card = __webpack_require__(15);
+	var _Card = __webpack_require__(21);
 
 	var _Card2 = _interopRequireDefault(_Card);
 
@@ -663,22 +794,15 @@ module.exports =
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'cards' },
-	        _react2.default.createElement(_Card2.default, {
-	          onClick: function onClick() {
-	            return _this2.props.router.push('product');
-	          }
-	        }),
-	        _react2.default.createElement(_Card2.default, null),
-	        _react2.default.createElement(_Card2.default, null),
-	        _react2.default.createElement(_Card2.default, null),
-	        _react2.default.createElement(_Card2.default, null),
-	        _react2.default.createElement(_Card2.default, null),
-	        _react2.default.createElement(_Card2.default, null),
-	        _react2.default.createElement(_Card2.default, null),
-	        _react2.default.createElement(_Card2.default, null),
-	        _react2.default.createElement(_Card2.default, null),
-	        _react2.default.createElement(_Card2.default, null),
-	        _react2.default.createElement(_Card2.default, null)
+	        this.props.products.map(function (product) {
+	          return _react2.default.createElement(_Card2.default, {
+	            key: product.id,
+	            onClick: function onClick() {
+	              return _this2.props.router.push('product');
+	            },
+	            product: product
+	          });
+	        })
 	      );
 	    }
 	  }]);
@@ -686,10 +810,16 @@ module.exports =
 	  return Home;
 	}(_react.Component);
 
-	exports.default = (0, _reactRedux.connect)(null, null)(Home);
+	function stateToProps(state) {
+	  return {
+	    products: state.products.products
+	  };
+	}
+
+	exports.default = (0, _reactRedux.connect)(stateToProps)(Home);
 
 /***/ },
-/* 15 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -724,6 +854,8 @@ module.exports =
 	  _createClass(Card, [{
 	    key: "render",
 	    value: function render() {
+	      var product = this.props.product;
+
 	      return _react2.default.createElement(
 	        "div",
 	        { className: "card-wrapper",
@@ -749,17 +881,18 @@ module.exports =
 	          _react2.default.createElement(
 	            "h3",
 	            { id: "title" },
-	            "Title of product"
+	            product.name
 	          ),
 	          _react2.default.createElement(
 	            "h2",
 	            { id: "price" },
-	            "Price in Euro"
+	            "EUR ",
+	            product.price || 0
 	          ),
 	          _react2.default.createElement(
 	            "p",
 	            null,
-	            "Short description Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+	            product.description
 	          )
 	        )
 	      );
@@ -772,7 +905,7 @@ module.exports =
 	exports.default = Card;
 
 /***/ },
-/* 16 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -985,7 +1118,7 @@ module.exports =
 	exports.default = Product;
 
 /***/ },
-/* 17 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1000,7 +1133,7 @@ module.exports =
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _CartCard = __webpack_require__(18);
+	var _CartCard = __webpack_require__(24);
 
 	var _CartCard2 = _interopRequireDefault(_CartCard);
 
@@ -1052,7 +1185,7 @@ module.exports =
 	exports.default = Basket;
 
 /***/ },
-/* 18 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1134,7 +1267,7 @@ module.exports =
 	exports.default = CartCard;
 
 /***/ },
-/* 19 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1151,7 +1284,7 @@ module.exports =
 
 	var _reactRedux = __webpack_require__(7);
 
-	var _store = __webpack_require__(20);
+	var _store = __webpack_require__(26);
 
 	var _store2 = _interopRequireDefault(_store);
 
@@ -1174,7 +1307,7 @@ module.exports =
 	exports.default = App;
 
 /***/ },
-/* 20 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1185,11 +1318,11 @@ module.exports =
 
 	var _redux = __webpack_require__(8);
 
-	var _reduxThunk = __webpack_require__(21);
+	var _reduxThunk = __webpack_require__(27);
 
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-	var _reducers = __webpack_require__(22);
+	var _reducers = __webpack_require__(28);
 
 	var _reducers2 = _interopRequireDefault(_reducers);
 
@@ -1204,13 +1337,13 @@ module.exports =
 	exports.default = initStore;
 
 /***/ },
-/* 21 */
+/* 27 */
 /***/ function(module, exports) {
 
 	module.exports = require("redux-thunk");
 
 /***/ },
-/* 22 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1221,20 +1354,25 @@ module.exports =
 
 	var _redux = __webpack_require__(8);
 
-	var _example = __webpack_require__(23);
+	var _products = __webpack_require__(29);
 
-	var _example2 = _interopRequireDefault(_example);
+	var _products2 = _interopRequireDefault(_products);
+
+	var _categories = __webpack_require__(32);
+
+	var _categories2 = _interopRequireDefault(_categories);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var combinedReducer = (0, _redux.combineReducers)({
-	  example: _example2.default
+	  categories: _categories2.default,
+	  products: _products2.default
 	});
 
 	exports.default = combinedReducer;
 
 /***/ },
-/* 23 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1243,19 +1381,38 @@ module.exports =
 	  value: true
 	});
 
-	var _immutable = __webpack_require__(24);
+	var _immutable = __webpack_require__(30);
 
-	var _lodash = __webpack_require__(25);
+	var _lodash = __webpack_require__(31);
 
-	var InitialState = new _immutable.Record({});
+	var _products = __webpack_require__(14);
+
+	var actions = _interopRequireWildcard(_products);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	var InitialState = new _immutable.Record({
+	  products: [],
+	  query: ''
+	});
 
 	var initialState = new InitialState();
 
-	function ExampleReducer() {
+	function ProductReducer() {
 	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
 	  var action = arguments[1];
 
 	  switch (action.type) {
+	    case actions.SET_PRODUCT_QUERY:
+	      {
+	        state = state.set('query', action.query);
+	        return state;
+	      }
+	    case actions.GET_PRODUCTS_SUCCESS:
+	      {
+	        state = state.set('products', action.response.data);
+	        return state;
+	      }
 	    default:
 	      {
 	        return state;
@@ -1263,22 +1420,67 @@ module.exports =
 	  }
 	}
 
-	exports.default = ExampleReducer;
+	exports.default = ProductReducer;
 
 /***/ },
-/* 24 */
+/* 30 */
 /***/ function(module, exports) {
 
 	module.exports = require("immutable");
 
 /***/ },
-/* 25 */
+/* 31 */
 /***/ function(module, exports) {
 
 	module.exports = require("lodash");
 
 /***/ },
-/* 26 */
+/* 32 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _immutable = __webpack_require__(30);
+
+	var _lodash = __webpack_require__(31);
+
+	var _categories = __webpack_require__(19);
+
+	var actions = _interopRequireWildcard(_categories);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	var InitialState = new _immutable.Record({
+	  categories: []
+	});
+
+	var initialState = new InitialState();
+
+	function CategoryReducer() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
+	  var action = arguments[1];
+
+	  switch (action.type) {
+	    case actions.GET_CATEGORIES_SUCCESS:
+	      {
+	        state = state.set('categories', action.response.data);
+	        return state;
+	      }
+	    default:
+	      {
+	        return state;
+	      }
+	  }
+	}
+
+	exports.default = CategoryReducer;
+
+/***/ },
+/* 33 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1295,7 +1497,7 @@ module.exports =
 	};
 
 /***/ },
-/* 27 */
+/* 34 */
 /***/ function(module, exports) {
 
 	module.exports = require("dotenv");
