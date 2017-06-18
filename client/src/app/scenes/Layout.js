@@ -6,6 +6,33 @@ import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 
 class Layout extends Component {
+  componentDidMount() {
+    let loggedIn = localStorage.getItem('current_user');
+    const path = this.props.location.pathname;
+    if (!loggedIn) {
+      switch (path) {
+        case '/login':
+        case 'login':
+        case 'sign_up':
+        case '/sign_up':
+          break;
+        default:
+          this.props.router.push('login');
+      }
+    } else {
+      switch (path) {
+        case '/login':
+        case 'login':
+        case 'sign_up':
+        case '/sign_up':
+          this.props.router.replace('/');
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
   render() {
     const path = this.props.location.pathname
     switch (path) {
