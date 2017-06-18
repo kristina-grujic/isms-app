@@ -31,6 +31,7 @@ const adminController = require('./controllers/admin');
 const usersController = require('./controllers/users');
 const categoriesController = require('./controllers/categories');
 const productsController = require('./controllers/products');
+const valuesController = require('./controllers/values');
 
 /**
  * Create Express server.
@@ -79,6 +80,9 @@ app.put('/categories', categoriesController.edit);
 app.get('/products', productsController.index);
 app.post('/products', productsController.create);
 app.put('/products', productsController.edit);
+// values routes
+app.post('/values', valuesController.create);
+app.put('/values', valuesController.edit);
 
 app.get('*', (req, res) => {
   res.sendFile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)

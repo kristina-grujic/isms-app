@@ -1,3 +1,4 @@
+const sequelize = require('../config/sequelize');
 const Category = require('../models/Category');
 const getDecodedToken = require('./utils/getToken');
 const { capitalize } = require('lodash');
@@ -5,6 +6,11 @@ const { capitalize } = require('lodash');
 exports.index = (req, res) => {
   Category.findAll({
     limit: 20,
+    include: [
+      {
+        model: sequelize.models.value, as: 'values'
+      }
+    ],
   })
     .then(categories => res.status(200).json({ data: categories }))
     .catch(error => res.status(500).json({ error }));
