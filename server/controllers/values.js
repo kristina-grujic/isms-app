@@ -31,3 +31,14 @@ exports.edit = (req, res) => {
     })
     .catch(error => res.status(400).json({ error }));
 };
+
+
+exports.delete = (req, res) => {
+  Value.destroy({
+    where: {
+      id: req.body.valueId,
+    }
+  })
+    .then(value => res.status(200).json({ data: value }))
+    .catch(error => res.status(500).json({ error }));
+};

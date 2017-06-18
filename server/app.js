@@ -61,6 +61,7 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }))
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   next();
 });
@@ -76,13 +77,16 @@ app.post('/register', usersController.signup);
 app.get('/categories', categoriesController.index);
 app.post('/categories', categoriesController.create);
 app.put('/categories', categoriesController.edit);
+app.delete('/categories', categoriesController.delete);
 // products routes
 app.get('/products', productsController.index);
 app.post('/products', productsController.create);
 app.put('/products', productsController.edit);
+app.delete('/products', productsController.delete);
 // values routes
 app.post('/values', valuesController.create);
 app.put('/values', valuesController.edit);
+app.delete('/values', valuesController.delete);
 
 app.get('*', (req, res) => {
   res.sendFile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)

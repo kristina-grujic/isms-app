@@ -68,3 +68,14 @@ exports.edit = (req, res) => {
     .then(product => res.status(200).json({ data: product }))
     .catch(error => res.status(500).json({ error }));
 };
+
+
+exports.delete = (req, res) => {
+  Product.destroy({
+    where: {
+      id: req.body.productId,
+    }
+  })
+    .then(product => res.status(200).json({ data: product }))
+    .catch(error => res.status(500).json({ error }));
+};

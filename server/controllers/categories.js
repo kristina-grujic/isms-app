@@ -47,3 +47,13 @@ exports.edit = (req, res) => {
     .then(category => res.status(200).json({ data: category }))
     .catch(error => res.status(500).json({ error }));
 };
+
+exports.delete = (req, res) => {
+  Category.destroy({
+    where: {
+      id: req.body.categoryId,
+    }
+  })
+    .then(category => res.status(200).json({ data: category }))
+    .catch(error => res.status(500).json({ error }));
+};
