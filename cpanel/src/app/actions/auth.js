@@ -11,6 +11,8 @@ export function login(request) {
       data: request
     })
       .then((response) => {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('current_user', JSON.stringify(response.data.data));
         dispatch({ type: actions.ADMIN_LOGIN_SUCCESS, response: response.data });
       })
       .catch((error) => {

@@ -8,12 +8,16 @@ import Sidebar from '../components/Sidebar';
 class Layout extends Component {
   componentDidMount() {
     let loggedIn = localStorage.getItem('current_user');
-    if (!loggedIn && this.props.location.pathname!=='/login') {
-      this.props.router.push('login');
+    const path = this.props.location.pathname;
+    if (!loggedIn && ( path!=='/login' || path!=='login')) {
+      this.props.router.replace('login');
+    } else if (loggedIn && ( path==='/login' || path==='login')) {
+      this.props.router.replace('/');
     }
   }
+
   render() {
-    if (this.props.location.pathname==='/login') {
+    if (this.props.location.pathname==='/login' || this.props.location.pathname==='login') {
       return (
         <div>
           { this.props.children }

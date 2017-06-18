@@ -30,7 +30,7 @@ class Login extends Component {
           alert('Invalid username or password');
           return;
         }
-        this.props.router.replace('/');
+        window.location = '/';
       })
   }
   render() {
@@ -38,11 +38,13 @@ class Login extends Component {
       <div className="login-container">
         <h3>Welcome to webshop control panel</h3>
         <input
+          placeholder="Username"
           onChange={(e) => this.setState({ username: e.target.value })}
           type='text'
           value={this.state.username}
         />
         <input
+          placeholder="Password"
           onChange={(e) => this.setState({ password: e.target.value })}
           type='password'
           value={this.state.password}

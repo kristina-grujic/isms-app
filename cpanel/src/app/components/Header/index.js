@@ -6,6 +6,7 @@ import FontAwesome from 'react-fontawesome';
 class Header extends Component {
   componentDidMount() {
     this.me = localStorage.getItem('logged_in');
+    this.forceUpdate();
   }
 
   render() {
