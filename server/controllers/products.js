@@ -27,6 +27,7 @@ exports.create = (req, res) => {
   const body = req.body;
   const categoryId = body.categoryId;
   delete body.categoryId;
+  body.values = JSON.parse(body.values);
   Category.find({
     where: {
       id: categoryId,
@@ -46,12 +47,16 @@ exports.edit = (req, res) => {
   if (!decoded || decoded.user_type !== 'admin') {
     return res.status(401).json({ error: 'Not an administrator' });
   }
+  if (!req.body.productId) {
+    return res.status(400).json({ error: 'No product id' });
+  }
   const body = req.body;
   const updateObject = {};
   if (body.name) {
     updateObject.name = body.name;
   }
   if (body.values) {
+    body.values = JSON.parse(body.values);
     updateObject.values = body.values;
   }
   if (body.description) {
@@ -74,6 +79,9 @@ exports.delete = (req, res) => {
   const decoded = getDecodedToken(req.headers);
   if (!decoded || decoded.user_type !== 'admin') {
     return res.status(401).json({ error: 'Not an administrator' });
+  }
+  if (!req.body.productId) {
+    return res.status(400).json({ error: 'No product id' });
   }
   Product.destroy({
     where: {
