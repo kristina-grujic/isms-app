@@ -27,11 +27,13 @@ class renderModal extends Component {
       alert('Name is required!');
       return;
     }
+    this.setState({ creating: true });
     this.props.editValue({
       valueId: this.state.value.id,
       name: this.state.name,
     })
       .then(() => {
+        this.setState({ creating: false });
         if (this.props.editError) {
           alert('There was an error editing field!');
           return;

@@ -27,11 +27,13 @@ class renderModal extends Component {
       alert('Name is required!');
       return;
     }
+    this.setState({ creating: true });
     this.props.editCategory({
       categoryId: this.state.category.id,
       name: this.state.name,
     })
       .then(() => {
+        this.setState({ creating: false });
         if (this.props.editError) {
           alert('There was an error editing category!');
           return;

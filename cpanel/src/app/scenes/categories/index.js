@@ -38,7 +38,11 @@ class Categories extends Component {
                     <td onClick={() => {
                       this.props.chooseCategory(category);
                       this.props.router.push('/values');
-                    }}>{category.name}</td>
+                    }}
+                      style={{cursor: 'pointer'}}
+                    >
+                      {category.name}
+                    </td>
                     <td style={{float: 'right'}}>
                       <button
                         onClick={() => EventEmitter.prototype.emit('edit-category-modal-open', category)}

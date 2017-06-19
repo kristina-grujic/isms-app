@@ -26,8 +26,10 @@ class renderModal extends Component {
       alert('Name is required!');
       return;
     }
+    this.setState({ creating: true });
     this.props.createCategory(this.state)
       .then(() => {
+        this.setState({ creating: false });
         if (this.props.createError) {
           alert('There was an error creating category!');
           return;

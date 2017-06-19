@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
+import { EventEmitter } from 'events';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
   getProducts,
   deleteProduct,
 } from '../../actions/products';
+import CreateModal from './create';
 
 class Products extends Component {
   componentDidMount() {
@@ -16,6 +18,7 @@ class Products extends Component {
       <div className="cards">
         <h3>Products</h3>
         <div className="button add-button"
+          onClick={() => EventEmitter.prototype.emit('add-product-modal-open')}
         >
           <h3>Add product</h3>
         </div>
@@ -28,6 +31,7 @@ class Products extends Component {
             </tr>
             {
               this.props.products.map((product) => {
+                if (!product.category) return;
                 return (
                   <tr key={product.id}>
                     <td>{product.name}</td>
@@ -54,6 +58,7 @@ class Products extends Component {
             }
           </tbody>
         </table>
+        <CreateModal />
       </div>
     )
   }

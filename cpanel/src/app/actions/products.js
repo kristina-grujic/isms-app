@@ -20,11 +20,15 @@ export function getProducts() {
 
 export function createProduct(product) {
   return (dispatch) => {
+    const headers = {
+      'Authorization': localStorage.getItem('token')
+    }
     dispatch({ type: actions.CREATE_PRODUCT_START });
     return axios({
       url: `${apiEndpoint}/products`,
       method: 'post',
       data: product,
+      headers,
     })
       .then((response) => {
         dispatch({ type: actions.CREATE_PRODUCT_SUCCESS, response: response.data });
@@ -38,11 +42,15 @@ export function createProduct(product) {
 
 export function editProduct(product) {
   return (dispatch) => {
+    const headers = {
+      'Authorization': localStorage.getItem('token')
+    }
     dispatch({ type: actions.EDIT_PRODUCT_START });
     return axios({
       url: `${apiEndpoint}/products`,
       method: 'put',
       data: product,
+      headers,
     })
       .then((response) => {
         dispatch({ type: actions.EDIT_PRODUCT_SUCCESS, response: response.data });
@@ -56,11 +64,15 @@ export function editProduct(product) {
 
 export function deleteProduct(product) {
   return (dispatch) => {
+    const headers = {
+      'Authorization': localStorage.getItem('token')
+    }
     dispatch({ type: actions.DELETE_PRODUCT_START });
     return axios({
       url: `${apiEndpoint}/products`,
       method: 'delete',
       data: product,
+      headers,
     })
       .then((response) => {
         dispatch({ type: actions.DELETE_PRODUCT_SUCCESS, response: response.data });

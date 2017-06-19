@@ -79,6 +79,23 @@
   outline: none;
 }
 
+.login-container textarea {
+  width: 60%;
+  height: 80px;
+  resize: none;
+  border: 1px solid lightseagreen;
+  padding: 10px;
+  margin: 10px;
+  margin-right: 0px;
+}
+
+.login-container textarea:focus {
+  color: salmon;
+  border-color: salmon;
+  box-shadow: 0 0 10px salmon;
+  outline: none;
+}
+
 .basket {
   margin: 30px;
 
