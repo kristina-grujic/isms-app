@@ -53,7 +53,7 @@ export function editProduct(product) {
       headers,
     })
       .then((response) => {
-        dispatch({ type: actions.EDIT_PRODUCT_SUCCESS, response: response.data });
+        dispatch({ type: actions.EDIT_PRODUCT_SUCCESS, response: response.data, product });
       })
       .catch((response) => {
         dispatch({ type: actions.EDIT_PRODUCT_ERROR, error: response.error });
@@ -75,7 +75,7 @@ export function deleteProduct(product) {
       headers,
     })
       .then((response) => {
-        dispatch({ type: actions.DELETE_PRODUCT_SUCCESS, response: response.data });
+        dispatch({ type: actions.DELETE_PRODUCT_SUCCESS, response: response.data, product });
       })
       .catch((response) => {
         dispatch({ type: actions.DELETE_PRODUCT_ERROR, error: response.error });

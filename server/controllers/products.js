@@ -2,6 +2,7 @@ const sequelize = require('../config/sequelize');
 const Product = require('../models/Product');
 const Category = require('../models/Category');
 const getDecodedToken = require('./utils/getToken');
+const { clone } = require('lodash');
 
 exports.index = (req, res) => {
   const query = req.query.query || '';
@@ -35,7 +36,19 @@ exports.create = (req, res) => {
   })
     .then((category) => {
       category.createProduct(body)
-        .then(data => res.status(200).json({ data }))
+        .then((data) => {
+          Product.find({
+            include: [
+              {
+                model: sequelize.models.category,
+              }
+            ],
+            where: {
+              id: data.id,
+            }
+          })
+            .then(result => res.status(200).json({ data: result }));
+        })
         .catch(error => res.status(500).json({ error }));
     })
     .catch(error => res.status(500).json({ error }));
