@@ -7,12 +7,17 @@ const InitialState = new Record({
   createError: undefined,
   editError: undefined,
   deleteError: undefined,
+  chosenCategory: undefined,
 });
 
 const initialState = new InitialState;
 
 function CategoryReducer(state = initialState, action) {
   switch (action.type) {
+    case actions.CHOOSE_CATEGORY: {
+      state = state.set('chosenCategory', action.category);
+      return state;
+    }
     case actions.GET_CATEGORIES_SUCCESS: {
       state = state.set('categories', action.response.data);
       return state;

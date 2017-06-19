@@ -2,7 +2,11 @@ import axios from 'axios';
 import * as actions from '../data/categories';
 import { apiEndpoint } from '../config';
 
-
+export function chooseCategory(category) {
+  return (dispatch) => {
+    dispatch({ type: actions.CHOOSE_CATEGORY, category });
+  }
+}
 
 export function getCategories() {
   return (dispatch) => {

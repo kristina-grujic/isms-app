@@ -3,27 +3,22 @@ import { EventEmitter } from 'events';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
-  getCategories,
-  deleteCategory,
-  chooseCategory,
-} from '../../actions/categories';
+  deleteValue,
+} from '../../actions/values';
 
 import CreateModal from './create';
 import EditModal from './edit';
 
-class Categories extends Component {
-  componentDidMount() {
-    this.props.getCategories();
-  }
+class Values extends Component {
 
   render() {
     return (
       <div className="cards">
-        <h3>Categories</h3>
+        <h3>Fields</h3>
         <div className="button add-button"
-          onClick={() => EventEmitter.prototype.emit('add-category-modal-open')}
+          onClick={() => EventEmitter.prototype.emit('add-value-modal-open')}
         >
-          <h3>Add category</h3>
+          <h3>Add field</h3>
         </div>
         <table className="list-table">
           <tbody>
@@ -32,29 +27,26 @@ class Categories extends Component {
               <th></th>
             </tr>
             {
-              this.props.categories.map((category) => {
+              this.props.values.map((value) => {
                 return (
-                  <tr key={category.id}>
-                    <td onClick={() => {
-                      this.props.chooseCategory(category);
-                      this.props.router.push('/values');
-                    }}>{category.name}</td>
+                  <tr key={value.id}>
+                    <td>{value.name}</td>
                     <td style={{float: 'right'}}>
                       <button
-                        onClick={() => EventEmitter.prototype.emit('edit-category-modal-open', category)}
+                        onClick={() => EventEmitter.prototype.emit('edit-value-modal-open', value)}
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => {
-                          const result = confirm('Are you sure you want to delete this category?');
+                          const result = confirm('Are you sure you want to delete this field?');
                           if (result) {
-                            this.props.deleteCategory({
-                              categoryId: category.id,
+                            this.props.deleteValue({
+                              valueId: value.id,
                             })
                               .then(() => {
                                 if (this.props.deleteError) {
-                                  alert('There was an error deleting category!');
+                                  alert('There was an error deleting field!');
                                   return;
                                 }
                               });
@@ -80,17 +72,15 @@ class Categories extends Component {
 
 function stateToProps(state) {
   return {
-    categories: state.categories.categories,
-    deleteError: state.categories.deleteError,
+    values: state.categories.chosenCategory ? state.categories.chosenCategory.values : [],
+    deleteError: state.values.deleteError,
   };
 }
 
 function dispatchToProps(dispatch) {
   return bindActionCreators({
-    getCategories,
-    deleteCategory,
-    chooseCategory,
+    deleteValue,
   }, dispatch)
 }
 
-export default connect(stateToProps, dispatchToProps)(Categories)
+export default connect(stateToProps, dispatchToProps)(Values)
