@@ -7,7 +7,7 @@ import {
   getCategories,
 } from '../../actions/categories';
 import {
-  createProduct,
+  editProduct,
 } from '../../actions/products';
 
 class renderModal extends Component {
@@ -20,6 +20,7 @@ class renderModal extends Component {
       values: {},
       creating: false,
       chosenCategory: undefined,
+      product: undefined,
     };
     this.openModal = this.openModal.bind(this);
     this.handleCloseModal= this.closeModal.bind(this);
@@ -34,9 +35,9 @@ class renderModal extends Component {
     }
     const product = this.state;
     this.setState({ creating: true });
-    product.categoryId = product.chosenCategory.id;
+    product.productId = this.state.product.id;
     product.values = JSON.stringify(product.values);
-    this.props.createProduct(product)
+    this.props.editProduct(product)
       .then(() => {
         this.setState({ creating: false });
 
@@ -44,22 +45,29 @@ class renderModal extends Component {
   }
 
   componentDidMount() {
-    EventEmitter.prototype.addListener('add-product-modal-open', this.openModal);
+    EventEmitter.prototype.addListener('edit-product-modal-open', this.openModal);
   }
 
   componentWillUnmount() {
-    EventEmitter.prototype.removeListener('add-product-modal-open', this.openModal);
+    EventEmitter.prototype.removeListener('edit-product-modal-open', this.openModal);
   }
 
-  openModal() {
+  openModal(product) {
     this.props.getCategories()
       .then(() => {
+        let chosenCategory;
+        this.props.categories.map((category) => {
+          if (product.categoryId === category.id) {
+            chosenCategory = category;
+          }
+        })
         this.setState({
-          open: true,
-          name: '',
-          description: '',
-          chosenCategory: undefined,
-          values: {},
+          open: chosenCategory ? true : false,
+          name: product.name,
+          description: product.description,
+          chosenCategory: chosenCategory,
+          values: product.values,
+          product: product,
         });
       })
   }
@@ -71,6 +79,7 @@ class renderModal extends Component {
       description: '',
       chosenCategory: undefined,
       values: {},
+      product: undefined,
     });
   }
 
@@ -81,6 +90,7 @@ class renderModal extends Component {
               onChange={(e) => this.setState({ name: e.target.value })}
               placeholder="Product name"
               type="text"
+              value={this.state.name}
             />
             {
               this.state.chosenCategory.values.map((value) => {
@@ -88,11 +98,12 @@ class renderModal extends Component {
                   <input key={value.id}
                     onChange={(event) => {
                       let values = this.state.values;
-                      values[value.name] = event.target.value;
+                      values[value.name] = event.target.value
                       this.setState({ values });
                     }}
                     placeholder={value.name}
                     type="text"
+                    value={this.state.values[value.name]}
                   />
                 )
               })
@@ -100,11 +111,12 @@ class renderModal extends Component {
             <textarea
               onChange={(e) => this.setState({ description: e.target.value })}
               placeholder="Description"
+              value={this.state.description}
             />
             <div className="button wide-button"
               onClick={this.state.creating ? null : this.handleSubmit}
             >
-              <h3>{ this.state.creating ? "Creating ... " : 'Create product' }</h3>
+              <h3>{ this.state.creating ? "Editing ... " : 'Edit product' }</h3>
             </div>
         </div>
     )
@@ -148,7 +160,7 @@ class renderModal extends Component {
             this.state.chosenCategory ?
               this.renderForm()
               :
-              this.chooseCategory()
+              null
           }
       </Modal>
     )
@@ -165,7 +177,7 @@ function stateToProps(state) {
 function dispatchToProps(dispatch) {
   return bindActionCreators({
     getCategories,
-    createProduct,
+    editProduct,
   }, dispatch)
 }
 
