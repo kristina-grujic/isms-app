@@ -1,7 +1,12 @@
+const getDecodedToken = require('./utils/getToken');
 const Category = require('../models/Category');
 const Value = require('../models/Value');
 
 exports.create = (req, res) => {
+  const decoded = getDecodedToken(req.headers);
+  if (!decoded || decoded.user_type !== 'admin') {
+    return res.status(401).json({ error: 'Not an administrator' });
+  }
   Category.findOne({ id: req.body.categoryId })
     .then((category) => {
       const value = {
@@ -17,6 +22,10 @@ exports.create = (req, res) => {
 };
 
 exports.edit = (req, res) => {
+  const decoded = getDecodedToken(req.headers);
+  if (!decoded || decoded.user_type !== 'admin') {
+    return res.status(401).json({ error: 'Not an administrator' });
+  }
   Value.find({
     where: {
       id: req.body.valueId,
@@ -34,6 +43,10 @@ exports.edit = (req, res) => {
 
 
 exports.delete = (req, res) => {
+  const decoded = getDecodedToken(req.headers);
+  if (!decoded || decoded.user_type !== 'admin') {
+    return res.status(401).json({ error: 'Not an administrator' });
+  }
   Value.destroy({
     where: {
       id: req.body.valueId,

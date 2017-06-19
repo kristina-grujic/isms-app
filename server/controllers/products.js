@@ -71,6 +71,10 @@ exports.edit = (req, res) => {
 
 
 exports.delete = (req, res) => {
+  const decoded = getDecodedToken(req.headers);
+  if (!decoded || decoded.user_type !== 'admin') {
+    return res.status(401).json({ error: 'Not an administrator' });
+  }
   Product.destroy({
     where: {
       id: req.body.productId,
