@@ -397,6 +397,8 @@ module.exports =
 	              color: 'lightseagreen',
 	              size: '2x'
 	            }),
+
+	            //  <Button>Profile</Button>
 	            this.me ? null : _react2.default.createElement(
 	              _Button2.default,
 	              {
@@ -408,8 +410,13 @@ module.exports =
 	            ),
 	            this.me ? _react2.default.createElement(
 	              _Button2.default,
-	              null,
-	              'Profile'
+	              {
+	                onClick: function onClick() {
+	                  localStorage.clear();
+	                  _this2.props.router.push('/login');
+	                }
+	              },
+	              'Log out'
 	            ) : _react2.default.createElement(
 	              _Button2.default,
 	              {
