@@ -12,10 +12,6 @@ const Product = sequelize.define('product', {
     type: Sequelize.STRING,
     required: true,
   },
-  price: {
-    type: Sequelize.FLOAT,
-    required: true,
-  },
   description: {
     type: Sequelize.TEXT,
   },
