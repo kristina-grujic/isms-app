@@ -17,7 +17,14 @@ class Header extends Component {
             <h3 id="title">{ "WebShop" }</h3>
           </div>
           <div className="header-buttons">
-            <Button>Log out</Button>
+            <Button
+              onClick={() => {
+                localStorage.clear();
+                this.props.router.push('/login');
+              }}
+            >
+              Log out
+            </Button>
           </div>
         </header>
       </div>

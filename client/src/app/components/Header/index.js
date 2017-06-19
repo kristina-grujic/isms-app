@@ -24,6 +24,7 @@ class Header extends Component {
               size='2x'
             />
             {
+              //  <Button>Profile</Button>
               this.me ?
                 null
                 :
@@ -35,7 +36,14 @@ class Header extends Component {
             }
             {
               this.me ?
-                <Button>Profile</Button>
+                <Button
+                  onClick={() => {
+                    localStorage.clear();
+                    this.props.router.push('/login');
+                  }}
+                >
+                  Log out
+                </Button>
                 :
                 <Button
                   onClick={() => this.props.router.push('/sign_up')}
