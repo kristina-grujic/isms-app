@@ -27,6 +27,17 @@ class renderModal extends Component {
       alert('Name is required!');
       return;
     }
+    this.props.editCategory({
+      categoryId: this.state.category.id,
+      name: this.state.name,
+    })
+      .then(() => {
+        if (this.props.editError) {
+          alert('There was an error editing category!');
+          return;
+        }
+        this.closeModal();
+      });
 
   }
 
@@ -86,7 +97,7 @@ class renderModal extends Component {
 
 function stateToProps(state) {
   return {
-    editCError: state.categories.editCError,
+    editError: state.categories.editError,
   }
 }
 

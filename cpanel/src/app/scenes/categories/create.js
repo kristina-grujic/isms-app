@@ -26,6 +26,14 @@ class renderModal extends Component {
       alert('Name is required!');
       return;
     }
+    this.props.createCategory(this.state)
+      .then(() => {
+        if (this.props.createError) {
+          alert('There was an error creating category!');
+          return;
+        }
+        this.closeModal();
+      });
 
   }
 
@@ -81,7 +89,7 @@ class renderModal extends Component {
 
 function stateToProps(state) {
   return {
-    createCError: state.categories.createCError,
+    createError: state.categories.createError,
   }
 }
 

@@ -48,6 +48,12 @@ class Categories extends Component {
                             this.props.deleteCategory({
                               categoryId: category.id,
                             })
+                              .then(() => {
+                                if (this.props.deleteError) {
+                                  alert('There was an error deleting category!');
+                                  return;
+                                }
+                              });
                           }
                         }}
 
@@ -71,6 +77,7 @@ class Categories extends Component {
 function stateToProps(state) {
   return {
     categories: state.categories.categories,
+    deleteError: state.categories.deleteError,
   };
 }
 
