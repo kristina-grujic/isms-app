@@ -30,7 +30,7 @@ exports.create = (req, res) => {
 };
 
 exports.edit = (req, res) => {
-  if (!req.body.id) return res.status(400).json({ error: 'No category id!' });
+  if (!req.body.categoryId) return res.status(400).json({ error: 'No category id!' });
   if (!req.body.name) return res.status(400).json({ error: 'No category name!' });
   const decoded = getDecodedToken(req.headers);
   if (!decoded || decoded.user_type !== 'admin') {
@@ -40,7 +40,7 @@ exports.edit = (req, res) => {
     { name: req.body.name },
     {
       where: {
-        id: req.body.id
+        id: req.body.categoryId
       }
     }
   )
@@ -49,6 +49,11 @@ exports.edit = (req, res) => {
 };
 
 exports.delete = (req, res) => {
+  const decoded = getDecodedToken(req.headers);
+  if (!decoded || decoded.user_type !== 'admin') {
+    return res.status(401).json({ error: 'Not an administrator' });
+  }
+  if (!req.body.categoryId) return res.status(400).json({ error: 'No category id!' });
   Category.destroy({
     where: {
       id: req.body.categoryId,
