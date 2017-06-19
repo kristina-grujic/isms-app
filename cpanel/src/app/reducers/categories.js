@@ -1,6 +1,7 @@
 import { Record } from 'immutable';
 import { clone, filter } from 'lodash';
 import * as actions from '../data/categories';
+import * as valueActions from '../data/values';
 
 const InitialState = new Record({
   categories: [],
@@ -16,6 +17,63 @@ function CategoryReducer(state = initialState, action) {
   switch (action.type) {
     case actions.CHOOSE_CATEGORY: {
       state = state.set('chosenCategory', action.category);
+      return state;
+    }
+    case valueActions.CREATE_VALUE_SUCCESS: {
+      let categories = clone(state.categories);
+      let chosenCategory = clone(state.chosenCategory);
+      let values = clone(chosenCategory.values);
+      values.push(action.response.data);
+      chosenCategory.values = values;
+      categories = categories.map((category) => {
+        if (category.id === chosenCategory.id) {
+          return chosenCategory;
+        }
+        return category;
+      })
+      state = state.set('chosenCategory', chosenCategory);
+      state = state.set('categories', categories);
+      return state;
+    }
+    case valueActions.EDIT_VALUE_SUCCESS: {
+      let categories = clone(state.categories);
+      let chosenCategory = clone(state.chosenCategory);
+      let values = clone(chosenCategory.values);
+      values = values.map((value) => {
+        if (value.id === action.value.valueId) {
+          let newValue = clone(value);
+          newValue.name = action.value.name;
+          return newValue;
+        }
+        return value;
+      })
+      chosenCategory.values = values;
+      categories = categories.map((category) => {
+        if (category.id === chosenCategory.id) {
+          return chosenCategory;
+        }
+        return category;
+      })
+      state = state.set('chosenCategory', chosenCategory);
+      state = state.set('categories', categories);
+      return state;
+    }
+    case valueActions.DELETE_VALUE_SUCCESS: {
+      let categories = clone(state.categories);
+      let chosenCategory = clone(state.chosenCategory);
+      let values = clone(chosenCategory.values);
+      values = filter(values, (value) => {
+        return value.id!==action.value.valueId;
+      })
+      chosenCategory.values = values;
+      categories = categories.map((category) => {
+        if (category.id === chosenCategory.id) {
+          return chosenCategory;
+        }
+        return category;
+      })
+      state = state.set('chosenCategory', chosenCategory);
+      state = state.set('categories', categories);
       return state;
     }
     case actions.GET_CATEGORIES_SUCCESS: {
