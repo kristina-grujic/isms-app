@@ -780,7 +780,7 @@ module.exports =
 	                key: category.id,
 	                onClick: function onClick(e) {
 	                  e.preventDefault();
-	                  _this2.props.router.push('category/' + category.id);
+	                  _this2.props.router.replace('/category/' + category.id);
 	                }
 	              },
 	              _react2.default.createElement(

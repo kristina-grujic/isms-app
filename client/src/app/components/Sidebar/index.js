@@ -24,7 +24,7 @@ class Sidebar extends Component {
                   key={category.id}
                   onClick={(e) => {
                     e.preventDefault();
-                    this.props.router.push(`category/${category.id}`);
+                    this.props.router.push(`/category/${category.id}`);
                   }}
                 >
                   <a href='#'>{category.name}</a>

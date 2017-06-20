@@ -13,7 +13,7 @@ class Home extends Component {
             return (
               <Card
                 key={product.id}
-                onClick={() => this.props.router.push(`product/${product.id}`)}
+                onClick={() => this.props.router.push(`/product/${product.id}`)}
                 product={product}
               />
             )
