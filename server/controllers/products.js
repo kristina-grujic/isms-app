@@ -93,6 +93,9 @@ exports.edit = (req, res) => {
   if (body.description) {
     updateObject.description = body.description;
   }
+  if (body.price) {
+    updateObject.price = body.price;
+  }
   Product.update(
     updateObject,
     {

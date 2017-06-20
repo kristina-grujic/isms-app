@@ -21,8 +21,8 @@ const Category = sequelize.define('category', {
 
 Category.hasOne(sequelize.models.category, { as: 'supercategory' });
 Category.hasMany(sequelize.models.category, { as: 'subcategories' });
-Category.hasMany(sequelize.models.product, { as: 'products' });
-Category.hasMany(sequelize.models.value, { as: 'values' });
+Category.hasMany(sequelize.models.product, { as: 'products', onDelete: 'cascade' });
+Category.hasMany(sequelize.models.value, { as: 'values', onDelete: 'cascade' });
 
 Product.belongsTo(sequelize.models.category);
 Value.belongsTo(sequelize.models.category);
