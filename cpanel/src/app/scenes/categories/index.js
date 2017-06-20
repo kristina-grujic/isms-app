@@ -32,6 +32,15 @@ class Categories extends Component {
               <th></th>
             </tr>
             {
+              this.props.categories.length ?
+                null
+                :
+                <tr>
+                  <td><h3>No categories</h3></td>
+                  <td/>
+                </tr>
+            }
+            {
               this.props.categories.map((category) => {
                 return (
                   <tr key={category.id}>

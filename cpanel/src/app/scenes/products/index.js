@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { EventEmitter } from 'events';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { filter } from 'lodash';
 import {
   getProducts,
   deleteProduct,
@@ -15,6 +16,9 @@ class Products extends Component {
   }
 
   render() {
+    let products_to_render = filter(this.props.products, (product) => {
+      return !!product.category;
+    });
     return (
       <div className="cards">
         <h3>Products</h3>
@@ -30,8 +34,19 @@ class Products extends Component {
               <th>Category</th>
               <th></th>
             </tr>
+
             {
-              this.props.products.map((product) => {
+              products_to_render.length ?
+                null
+                :
+                <tr>
+                  <td><h3>No products</h3></td>
+                  <td />
+                  <td />
+                </tr>
+            }
+            {
+              products_to_render.map((product) => {
                 if (!product.category) return;
                 return (
                   <tr key={product.id}>

@@ -7,6 +7,10 @@
   width: 150px !important;
 }
 
+.super-wide-button {
+  width: 220px !important;
+}
+
 .list-table {
   padding: 20px;
   width: 90%;

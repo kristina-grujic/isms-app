@@ -3,6 +3,9 @@ import { EventEmitter } from 'events';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
+  chooseCategory,
+} from '../../actions/categories';
+import {
   deleteValue,
 } from '../../actions/values';
 
@@ -10,11 +13,34 @@ import CreateModal from './create';
 import EditModal from './edit';
 
 class Values extends Component {
+  componentDidMount() {
+    if (!this.props.chosenCategory) {
+      this.props.router.replace('/categories');
+    }
+  }
 
   render() {
     return (
       <div className="cards">
-        <h3>Fields</h3>
+        <div className="button super-wide-button"
+          onClick={() => {
+            this.props.chooseCategory(undefined);
+            this.props.router.replace('/categories');
+          }}
+        >
+          <h3>Back to category list</h3>
+        </div>
+        <h3>
+          {
+            `Fields - ${
+              this.props.chosenCategory ?
+                this.props.chosenCategory.name
+                :
+                ''
+              }
+            `
+          }
+        </h3>
         <div className="button add-button"
           onClick={() => EventEmitter.prototype.emit('add-value-modal-open')}
         >
@@ -26,6 +52,16 @@ class Values extends Component {
               <th>Name</th>
               <th></th>
             </tr>
+
+            {
+              this.props.values.length ?
+                null
+                :
+                <tr>
+                  <td><h3>No fields</h3></td>
+                  <td/>
+                </tr>
+            }
             {
               this.props.values.map((value) => {
                 return (
@@ -72,6 +108,7 @@ class Values extends Component {
 
 function stateToProps(state) {
   return {
+    chosenCategory: state.categories.chosenCategory,
     values: state.categories.chosenCategory ? state.categories.chosenCategory.values : [],
     deleteError: state.values.deleteError,
   };
@@ -79,6 +116,7 @@ function stateToProps(state) {
 
 function dispatchToProps(dispatch) {
   return bindActionCreators({
+    chooseCategory,
     deleteValue,
   }, dispatch)
 }
