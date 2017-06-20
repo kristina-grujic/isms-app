@@ -32,6 +32,10 @@ exports.login = (req, res) => {
 exports.signup = (req, res) => {
   const body = req.body;
   body.user_type = 'user';
+  const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+  if (!passRegex.test(body.password)) {
+    return res.status(400).json({ error: 'Password too simple' });
+  }
   body.password = bcrypt.hashSync(body.password);
   User.create(body)
     .then(() => res.status(200).json({ success: 'Signup successful' }))

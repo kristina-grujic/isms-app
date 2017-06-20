@@ -56676,7 +56676,6 @@
 	    value: function render() {
 	      var _this2 = this;
 
-	      console.log(this.props.products.length);
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'cards' },
@@ -57355,6 +57354,7 @@
 	          email = _state.email,
 	          password = _state.password;
 
+
 	      if (!name || !email || !password) {
 	        alert('Name, email and password are required!');
 	        return;
@@ -57362,6 +57362,11 @@
 	      var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 	      if (!re.test(email)) {
 	        alert('Email is not valid!');
+	        return;
+	      }
+	      var passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+	      if (!passRegex.test(password)) {
+	        alert('Password should be at least 8 characters long, contain at least one upper case, one lower case letter and one number');
 	        return;
 	      }
 	      this.props.sign_up(this.state).then(function () {

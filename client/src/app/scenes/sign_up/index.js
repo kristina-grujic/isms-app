@@ -22,6 +22,7 @@ class Signup extends Component {
       email,
       password,
     } = this.state;
+
     if (!name || !email || !password) {
       alert('Name, email and password are required!');
       return;
@@ -29,6 +30,11 @@ class Signup extends Component {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (!re.test(email)) {
       alert('Email is not valid!');
+      return;
+    }
+    const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+    if (!passRegex.test(password)) {
+      alert('Password should be at least 8 characters long, contain at least one upper case, one lower case letter and one number');
       return;
     }
     this.props.sign_up(this.state)
