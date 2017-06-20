@@ -1,12 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import Card from './Card';
+import Card from '../home/Card';
 
 class Home extends Component {
   render() {
     return (
       <div className="cards">
+        {
+          this.props.products.length ?
+            null
+            :
+            <h3>No results</h3>
+        }
         {
           this.props.products.map((product) => {
             if (!product.category) return;

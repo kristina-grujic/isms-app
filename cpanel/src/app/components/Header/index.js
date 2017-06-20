@@ -14,7 +14,11 @@ class Header extends Component {
       <div>
         <header className="header">
           <div className="header-searchbox">
-            <h3 id="title">{ "WebShop" }</h3>
+            <h3 id="title"
+              onClick={() => this.props.router.push('/')}
+            >
+              { "WebShop" }
+            </h3>
           </div>
           <div className="header-buttons">
             <Button

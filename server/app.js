@@ -100,7 +100,7 @@ app.use(errorHandler());
 /**
  * Start Express server.
  */
-sequelize.sync({ force: true }).then(() => {
+sequelize.sync({ force: false }).then(() => {
   app.listen(app.get('port'), () => {
     console.log('%s App is running at http://localhost:%d in %s mode',
                 chalk.green('✓'),

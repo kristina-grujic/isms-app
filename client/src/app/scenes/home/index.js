@@ -8,6 +8,12 @@ class Home extends Component {
     return (
       <div className="cards">
         {
+          this.props.products.length ?
+            null
+            :
+            <h3>No results</h3>
+        }
+        {
           this.props.products.map((product) => {
             if (!product.category) return;
             return (

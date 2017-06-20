@@ -63,23 +63,23 @@ module.exports =
 
 	var _routes2 = _interopRequireDefault(_routes);
 
-	var _app = __webpack_require__(32);
+	var _app = __webpack_require__(31);
 
 	var _app2 = _interopRequireDefault(_app);
 
-	var _template = __webpack_require__(40);
+	var _template = __webpack_require__(39);
 
 	var _template2 = _interopRequireDefault(_template);
 
 	var _reactRedux = __webpack_require__(7);
 
-	var _store = __webpack_require__(33);
+	var _store = __webpack_require__(32);
 
 	var _store2 = _interopRequireDefault(_store);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	__webpack_require__(41).config({ path: '../.env' });
+	__webpack_require__(40).config({ path: '../.env' });
 
 
 	var server = (0, _express2.default)();
@@ -380,7 +380,11 @@ module.exports =
 	            { className: 'header-searchbox' },
 	            _react2.default.createElement(
 	              'h3',
-	              { id: 'title' },
+	              { id: 'title',
+	                onClick: function onClick() {
+	                  return _this2.props.router.push('/');
+	                }
+	              },
 	              "WebShop"
 	            ),
 	            _react2.default.createElement(_Searchbox2.default, { location: this.props.location })
@@ -780,7 +784,7 @@ module.exports =
 	                key: category.id,
 	                onClick: function onClick(e) {
 	                  e.preventDefault();
-	                  _this2.props.router.replace('/category/' + category.id);
+	                  _this2.props.router.push('/category/' + category.id);
 	                }
 	              },
 	              _react2.default.createElement(
@@ -908,15 +912,21 @@ module.exports =
 	    value: function render() {
 	      var _this2 = this;
 
+	      console.log(this.props.products.length);
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'cards' },
+	        this.props.products.length ? null : _react2.default.createElement(
+	          'h3',
+	          null,
+	          'No results'
+	        ),
 	        this.props.products.map(function (product) {
 	          if (!product.category) return;
 	          return _react2.default.createElement(_Card2.default, {
 	            key: product.id,
 	            onClick: function onClick() {
-	              return _this2.props.router.push('product/' + product.id);
+	              return _this2.props.router.push('/product/' + product.id);
 	            },
 	            product: product
 	          });
@@ -1699,7 +1709,7 @@ module.exports =
 
 	var _reactRedux = __webpack_require__(7);
 
-	var _Card = __webpack_require__(31);
+	var _Card = __webpack_require__(21);
 
 	var _Card2 = _interopRequireDefault(_Card);
 
@@ -1728,12 +1738,17 @@ module.exports =
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'cards' },
+	        this.props.products.length ? null : _react2.default.createElement(
+	          'h3',
+	          null,
+	          'No results'
+	        ),
 	        this.props.products.map(function (product) {
 	          if (!product.category) return;
 	          return _react2.default.createElement(_Card2.default, {
 	            key: product.id,
 	            onClick: function onClick() {
-	              return _this2.props.router.push('product/' + product.id);
+	              return _this2.props.router.push('/product/' + product.id);
 	            },
 	            product: product
 	          });
@@ -1757,92 +1772,6 @@ module.exports =
 /* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(2);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var Card = function (_Component) {
-	  _inherits(Card, _Component);
-
-	  function Card() {
-	    _classCallCheck(this, Card);
-
-	    return _possibleConstructorReturn(this, (Card.__proto__ || Object.getPrototypeOf(Card)).apply(this, arguments));
-	  }
-
-	  _createClass(Card, [{
-	    key: "render",
-	    value: function render() {
-	      var product = this.props.product;
-
-	      return _react2.default.createElement(
-	        "div",
-	        { className: "card-wrapper",
-	          onClick: this.props.onClick
-	        },
-	        _react2.default.createElement(
-	          "div",
-	          { className: "card" },
-	          _react2.default.createElement(
-	            "div",
-	            { id: "image" },
-	            _react2.default.createElement("img", { src: "https://www.smashingmagazine.com/wp-content/uploads/2015/06/10-dithering-opt.jpg" }),
-	            _react2.default.createElement(
-	              "div",
-	              { className: "view-card-offer" },
-	              _react2.default.createElement(
-	                "h3",
-	                null,
-	                "View details..."
-	              )
-	            )
-	          ),
-	          _react2.default.createElement(
-	            "h3",
-	            { id: "title" },
-	            product.name
-	          ),
-	          _react2.default.createElement(
-	            "h2",
-	            { id: "price" },
-	            "EUR ",
-	            product.price || 0
-	          ),
-	          _react2.default.createElement(
-	            "p",
-	            null,
-	            product.description
-	          )
-	        )
-	      );
-	    }
-	  }]);
-
-	  return Card;
-	}(_react.Component);
-
-	exports.default = Card;
-
-/***/ },
-/* 32 */
-/***/ function(module, exports, __webpack_require__) {
-
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
@@ -1857,7 +1786,7 @@ module.exports =
 
 	var _reactRedux = __webpack_require__(7);
 
-	var _store = __webpack_require__(33);
+	var _store = __webpack_require__(32);
 
 	var _store2 = _interopRequireDefault(_store);
 
@@ -1880,7 +1809,7 @@ module.exports =
 	exports.default = App;
 
 /***/ },
-/* 33 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1891,11 +1820,11 @@ module.exports =
 
 	var _redux = __webpack_require__(8);
 
-	var _reduxThunk = __webpack_require__(34);
+	var _reduxThunk = __webpack_require__(33);
 
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-	var _reducers = __webpack_require__(35);
+	var _reducers = __webpack_require__(34);
 
 	var _reducers2 = _interopRequireDefault(_reducers);
 
@@ -1910,13 +1839,13 @@ module.exports =
 	exports.default = initStore;
 
 /***/ },
-/* 34 */
+/* 33 */
 /***/ function(module, exports) {
 
 	module.exports = require("redux-thunk");
 
 /***/ },
-/* 35 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1927,15 +1856,15 @@ module.exports =
 
 	var _redux = __webpack_require__(8);
 
-	var _products = __webpack_require__(36);
+	var _products = __webpack_require__(35);
 
 	var _products2 = _interopRequireDefault(_products);
 
-	var _categories = __webpack_require__(38);
+	var _categories = __webpack_require__(37);
 
 	var _categories2 = _interopRequireDefault(_categories);
 
-	var _auth = __webpack_require__(39);
+	var _auth = __webpack_require__(38);
 
 	var _auth2 = _interopRequireDefault(_auth);
 
@@ -1950,7 +1879,7 @@ module.exports =
 	exports.default = combinedReducer;
 
 /***/ },
-/* 36 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1959,7 +1888,7 @@ module.exports =
 	  value: true
 	});
 
-	var _immutable = __webpack_require__(37);
+	var _immutable = __webpack_require__(36);
 
 	var _lodash = __webpack_require__(23);
 
@@ -2007,13 +1936,13 @@ module.exports =
 	exports.default = ProductReducer;
 
 /***/ },
-/* 37 */
+/* 36 */
 /***/ function(module, exports) {
 
 	module.exports = require("immutable");
 
 /***/ },
-/* 38 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2022,7 +1951,7 @@ module.exports =
 	  value: true
 	});
 
-	var _immutable = __webpack_require__(37);
+	var _immutable = __webpack_require__(36);
 
 	var _lodash = __webpack_require__(23);
 
@@ -2058,7 +1987,7 @@ module.exports =
 	exports.default = CategoryReducer;
 
 /***/ },
-/* 39 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2067,7 +1996,7 @@ module.exports =
 	  value: true
 	});
 
-	var _immutable = __webpack_require__(37);
+	var _immutable = __webpack_require__(36);
 
 	var _lodash = __webpack_require__(23);
 
@@ -2108,7 +2037,7 @@ module.exports =
 	exports.default = AuthReducer;
 
 /***/ },
-/* 40 */
+/* 39 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -2125,7 +2054,7 @@ module.exports =
 	};
 
 /***/ },
-/* 41 */
+/* 40 */
 /***/ function(module, exports) {
 
 	module.exports = require("dotenv");
