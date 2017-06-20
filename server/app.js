@@ -12,11 +12,13 @@ const passport = require('passport');
 const path = require('path');
 const expressValidator = require('express-validator');
 const expressStatusMonitor = require('express-status-monitor');
-const multer = require('multer');
+// const multer = require('multer');
 const sequelize = require('./config/sequelize');
 const helmet = require('helmet');
+const https = require('https');
+const fs = require('fs');
 
-const upload = multer();
+// const upload = multer();
 
 require('./config/passport')(passport);
 
@@ -102,17 +104,24 @@ app.get('*', (req, res) => {
  */
 app.use(errorHandler());
 
+const credentials = {
+  key: fs.readFileSync('../sslcert/server.key'),
+  cert: fs.readFileSync('../sslcert/server.crt'),
+  ca: fs.readFileSync('../sslcert/ca.crt'),
+  requestCert: true,
+  rejectUnauthorized: false,
+};
+
+const httpsServer = https.createServer(credentials, app);
 /**
  * Start Express server.
  */
 sequelize.sync({ force: false }).then(() => {
-  app.listen(app.get('port'), () => {
-    console.log('%s App is running at http://localhost:%d in %s mode',
+  httpsServer.listen(app.get('port'), () => {
+    console.log('%s App is running at https://localhost:%d in %s mode',
                 chalk.green('✓'),
                 app.get('port'),
                 app.get('env'));
     console.log('  Press CTRL-C to stop\n');
   });
 });
-
-module.exports = app;

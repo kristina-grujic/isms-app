@@ -56323,7 +56323,7 @@
 
 	// what is api endpoint
 
-	var apiEndpoint = 'http://localhost:3000';
+	var apiEndpoint = 'https://localhost:3000';
 
 	module.exports = {
 	  apiEndpoint: apiEndpoint

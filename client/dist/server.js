@@ -81,6 +81,8 @@ module.exports =
 
 	__webpack_require__(40).config({ path: '../.env' });
 
+	var https = __webpack_require__(41);
+	var fs = __webpack_require__(42);
 
 	var server = (0, _express2.default)();
 
@@ -110,8 +112,20 @@ module.exports =
 	  });
 	});
 
-	server.listen(process.env.PORT || 3000);
-	console.log("Server listening on port: " + (process.env.PORT || 3000));
+	var credentials = {
+	  key: fs.readFileSync('../../sslcert/server.key'),
+	  cert: fs.readFileSync('../../sslcert/server.crt'),
+	  ca: fs.readFileSync('../../sslcert/ca.crt'),
+	  requestCert: true,
+	  rejectUnauthorized: false
+	};
+
+	var httpsServer = https.createServer(credentials, server);
+
+	httpsServer.listen(process.env.PORT || 3000, function () {
+	  console.log('App is running at https://localhost:%d', process.env.PORT || 3000);
+	  console.log('  Press CTRL-C to stop\n');
+	});
 
 /***/ },
 /* 1 */
@@ -707,7 +721,7 @@ module.exports =
 
 	// what is api endpoint
 
-	var apiEndpoint = 'http://localhost:3000';
+	var apiEndpoint = 'https://localhost:3000';
 
 	module.exports = {
 	  apiEndpoint: apiEndpoint
@@ -2063,6 +2077,18 @@ module.exports =
 /***/ function(module, exports) {
 
 	module.exports = require("dotenv");
+
+/***/ },
+/* 41 */
+/***/ function(module, exports) {
+
+	module.exports = require("https");
+
+/***/ },
+/* 42 */
+/***/ function(module, exports) {
+
+	module.exports = require("fs");
 
 /***/ }
 /******/ ]);

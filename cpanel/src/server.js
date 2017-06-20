@@ -6,6 +6,8 @@ import { match, RouterContext } from 'react-router'
 import routes from './app/routes'
 import App from './app/app';
 import template from './template';
+const https = require('https');
+const fs = require('fs');
 
 import { Provider } from 'react-redux';
 import createStore from './app/store';
@@ -38,5 +40,20 @@ server.get('*', (req, res) => {
   })
 });
 
-server.listen((process.env.PORT || 3000));
-console.log("Server listening on port: " + (process.env.PORT || 3000));
+
+const credentials = {
+  key: fs.readFileSync('../../sslcert/server.key'),
+  cert: fs.readFileSync('../../sslcert/server.crt'),
+  ca: fs.readFileSync('../../sslcert/ca.crt'),
+  requestCert: true,
+  rejectUnauthorized: false,
+};
+
+const httpsServer = https.createServer(credentials, server);
+
+httpsServer.listen(process.env.PORT || 3000, () => {
+  console.log('App is running at https://localhost:%d',
+              (process.env.PORT || 3000),
+            );
+  console.log('  Press CTRL-C to stop\n');
+});
