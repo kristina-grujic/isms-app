@@ -2,4 +2,9 @@ export const GET_PRODUCTS_START       = "GET_PRODUCTS_START";
 export const GET_PRODUCTS_SUCCESS     = "GET_PRODUCTS_SUCCESS";
 export const GET_PRODUCTS_ERROR       = "GET_PRODUCTS_ERROR";
 
+export const GET_PRODUCT_START        = "GET_PRODUCT_START";
+export const GET_PRODUCT_SUCCESS      = "GET_PRODUCT_SUCCESS";
+export const GET_PRODUCT_ERROR        = "GET_PRODUCT_ERROR";
+
+
 export const SET_PRODUCT_QUERY        = "SET_PRODUCT_QUERY";

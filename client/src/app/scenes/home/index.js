@@ -9,10 +9,11 @@ class Home extends Component {
       <div className="cards">
         {
           this.props.products.map((product) => {
+            if (!product.category) return;
             return (
               <Card
                 key={product.id}
-                onClick={() => this.props.router.push('product')}
+                onClick={() => this.props.router.push(`product/${product.id}`)}
                 product={product}
               />
             )

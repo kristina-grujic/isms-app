@@ -63,7 +63,7 @@ module.exports =
 
 	var _routes2 = _interopRequireDefault(_routes);
 
-	var _app = __webpack_require__(29);
+	var _app = __webpack_require__(30);
 
 	var _app2 = _interopRequireDefault(_app);
 
@@ -73,7 +73,7 @@ module.exports =
 
 	var _reactRedux = __webpack_require__(7);
 
-	var _store = __webpack_require__(30);
+	var _store = __webpack_require__(31);
 
 	var _store2 = _interopRequireDefault(_store);
 
@@ -161,15 +161,15 @@ module.exports =
 
 	var _index4 = _interopRequireDefault(_index3);
 
-	var _index5 = __webpack_require__(23);
+	var _index5 = __webpack_require__(24);
 
 	var _index6 = _interopRequireDefault(_index5);
 
-	var _index7 = __webpack_require__(25);
+	var _index7 = __webpack_require__(26);
 
 	var _index8 = _interopRequireDefault(_index7);
 
-	var _index9 = __webpack_require__(28);
+	var _index9 = __webpack_require__(29);
 
 	var _index10 = _interopRequireDefault(_index9);
 
@@ -181,7 +181,7 @@ module.exports =
 	    path: '/'
 	  },
 	  _react2.default.createElement(_reactRouter.IndexRoute, { component: _index2.default }),
-	  _react2.default.createElement(_reactRouter.Route, { path: 'product', component: _index4.default }),
+	  _react2.default.createElement(_reactRouter.Route, { path: 'product/:id', component: _index4.default }),
 	  _react2.default.createElement(_reactRouter.Route, { path: 'cart', component: _index6.default }),
 	  _react2.default.createElement(_reactRouter.Route, { path: 'login', component: _index8.default }),
 	  _react2.default.createElement(_reactRouter.Route, { path: 'sign_up', component: _index10.default })
@@ -237,17 +237,7 @@ module.exports =
 	    value: function componentDidMount() {
 	      var loggedIn = localStorage.getItem('current_user');
 	      var path = this.props.location.pathname;
-	      if (!loggedIn) {
-	        switch (path) {
-	          case '/login':
-	          case 'login':
-	          case 'sign_up':
-	          case '/sign_up':
-	            break;
-	          default:
-	            this.props.router.push('login');
-	        }
-	      } else {
+	      if (loggedIn) {
 	        switch (path) {
 	          case '/login':
 	          case 'login':
@@ -590,6 +580,7 @@ module.exports =
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.getProduct = getProduct;
 	exports.getProducts = getProducts;
 	exports.setQuery = setQuery;
 
@@ -606,6 +597,23 @@ module.exports =
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function getProduct(productId) {
+	  return function (dispatch) {
+	    dispatch({ type: actions.GET_PRODUCT_START });
+	    return (0, _axios2.default)({
+	      url: _config.apiEndpoint + '/product',
+	      method: 'get',
+	      params: {
+	        productId: productId
+	      }
+	    }).then(function (response) {
+	      dispatch({ type: actions.GET_PRODUCT_SUCCESS, response: response.data });
+	    }).catch(function (response) {
+	      dispatch({ type: actions.GET_PRODUCT_ERROR, error: response.error });
+	    });
+	  };
+	}
 
 	function getProducts() {
 	  var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
@@ -652,6 +660,10 @@ module.exports =
 	var GET_PRODUCTS_START = exports.GET_PRODUCTS_START = "GET_PRODUCTS_START";
 	var GET_PRODUCTS_SUCCESS = exports.GET_PRODUCTS_SUCCESS = "GET_PRODUCTS_SUCCESS";
 	var GET_PRODUCTS_ERROR = exports.GET_PRODUCTS_ERROR = "GET_PRODUCTS_ERROR";
+
+	var GET_PRODUCT_START = exports.GET_PRODUCT_START = "GET_PRODUCT_START";
+	var GET_PRODUCT_SUCCESS = exports.GET_PRODUCT_SUCCESS = "GET_PRODUCT_SUCCESS";
+	var GET_PRODUCT_ERROR = exports.GET_PRODUCT_ERROR = "GET_PRODUCT_ERROR";
 
 	var SET_PRODUCT_QUERY = exports.SET_PRODUCT_QUERY = "SET_PRODUCT_QUERY";
 
@@ -866,10 +878,11 @@ module.exports =
 	        'div',
 	        { className: 'cards' },
 	        this.props.products.map(function (product) {
+	          if (!product.category) return;
 	          return _react2.default.createElement(_Card2.default, {
 	            key: product.id,
 	            onClick: function onClick() {
-	              return _this2.props.router.push('product');
+	              return _this2.props.router.push('product/' + product.id);
 	            },
 	            product: product
 	          });
@@ -979,7 +992,7 @@ module.exports =
 /* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -990,6 +1003,14 @@ module.exports =
 	var _react = __webpack_require__(2);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(7);
+
+	var _redux = __webpack_require__(8);
+
+	var _lodash = __webpack_require__(23);
+
+	var _products = __webpack_require__(12);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1009,173 +1030,103 @@ module.exports =
 	  }
 
 	  _createClass(Product, [{
-	    key: "render",
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      var _this2 = this;
+
+	      var id = this.props.location.pathname.split('/');
+	      id = id[id.length - 1];
+	      this.props.getProduct(id).then(function () {
+	        if (!_this2.props.currentProduct) {
+	          _this2.props.router.replace('/');
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'render',
 	    value: function render() {
+	      if (!this.props.currentProduct) {
+	        return _react2.default.createElement('div', { className: 'cards' });
+	      }
+	      var product = this.props.currentProduct;
 	      return _react2.default.createElement(
-	        "div",
-	        { className: "cards" },
+	        'div',
+	        { className: 'cards' },
 	        _react2.default.createElement(
-	          "div",
-	          { className: "main-card" },
+	          'div',
+	          { className: 'main-card' },
 	          _react2.default.createElement(
-	            "div",
-	            { className: "main-info-wrapper" },
-	            _react2.default.createElement("img", { src: "https://www.smashingmagazine.com/wp-content/uploads/2015/06/10-dithering-opt.jpg" }),
+	            'div',
+	            { className: 'main-info-wrapper' },
+	            _react2.default.createElement('img', { src: 'https://www.smashingmagazine.com/wp-content/uploads/2015/06/10-dithering-opt.jpg' }),
 	            _react2.default.createElement(
-	              "div",
+	              'div',
 	              null,
 	              _react2.default.createElement(
-	                "h3",
-	                { id: "title" },
-	                "Title of product"
+	                'h3',
+	                { id: 'title' },
+	                product.name
 	              ),
 	              _react2.default.createElement(
-	                "h2",
-	                { id: "price" },
-	                "Price in Euro"
+	                'h2',
+	                { id: 'price' },
+	                product.price
 	              ),
 	              _react2.default.createElement(
-	                "div",
-	                { className: "cart-button-wrapper" },
+	                'div',
+	                { className: 'cart-button-wrapper' },
 	                _react2.default.createElement(
-	                  "h5",
+	                  'h5',
 	                  null,
-	                  "Quantity"
+	                  'Quantity'
 	                ),
-	                _react2.default.createElement("input", { type: "number" }),
+	                _react2.default.createElement('input', { type: 'number' }),
 	                _react2.default.createElement(
-	                  "div",
-	                  { className: "button cart" },
+	                  'div',
+	                  { className: 'button cart' },
 	                  _react2.default.createElement(
-	                    "h3",
+	                    'h3',
 	                    null,
-	                    "Add to cart"
+	                    'Add to cart'
 	                  )
 	                )
 	              )
 	            )
 	          ),
 	          _react2.default.createElement(
-	            "div",
-	            { className: "detailed-info-wrapper" },
+	            'div',
+	            { className: 'detailed-info-wrapper' },
 	            _react2.default.createElement(
-	              "h3",
+	              'h3',
 	              null,
-	              "Description"
+	              'Description'
 	            ),
 	            _react2.default.createElement(
-	              "p",
+	              'p',
 	              null,
-	              "Short description Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+	              product.description || '/'
 	            ),
 	            _react2.default.createElement(
-	              "h3",
+	              'h3',
 	              null,
-	              "Details"
+	              'Details'
 	            ),
 	            _react2.default.createElement(
-	              "ul",
+	              'ul',
 	              null,
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "strong",
-	                  null,
-	                  "Size: "
-	                ),
-	                "40"
-	              ),
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "strong",
-	                  null,
-	                  "Producer: "
-	                ),
-	                "Veleproduct"
-	              ),
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "strong",
-	                  null,
-	                  "Size: "
-	                ),
-	                "40"
-	              ),
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "strong",
-	                  null,
-	                  "Producer: "
-	                ),
-	                "Veleproduct"
-	              ),
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "strong",
-	                  null,
-	                  "Size: "
-	                ),
-	                "40"
-	              ),
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "strong",
-	                  null,
-	                  "Producer: "
-	                ),
-	                "Veleproduct"
-	              ),
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "strong",
-	                  null,
-	                  "Size: "
-	                ),
-	                "40"
-	              ),
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "strong",
-	                  null,
-	                  "Producer: "
-	                ),
-	                "Veleproduct"
-	              ),
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "strong",
-	                  null,
-	                  "Size: "
-	                ),
-	                "40"
-	              ),
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "strong",
-	                  null,
-	                  "Producer: "
-	                ),
-	                "Veleproduct"
-	              )
+	              (0, _lodash.keys)(product.values).length ? null : '/',
+	              (0, _lodash.keys)(product.values).map(function (valueName) {
+	                return _react2.default.createElement(
+	                  'li',
+	                  { key: valueName },
+	                  _react2.default.createElement(
+	                    'strong',
+	                    null,
+	                    valueName + ': '
+	                  ),
+	                  product.values[valueName]
+	                );
+	              })
 	            )
 	          )
 	        )
@@ -1186,10 +1137,28 @@ module.exports =
 	  return Product;
 	}(_react.Component);
 
-	exports.default = Product;
+	function stateToProps(state) {
+	  return {
+	    currentProduct: state.products.currentProduct
+	  };
+	}
+
+	function dispatchToProps(dispatch) {
+	  return (0, _redux.bindActionCreators)({
+	    getProduct: _products.getProduct
+	  }, dispatch);
+	}
+
+	exports.default = (0, _reactRedux.connect)(stateToProps, dispatchToProps)(Product);
 
 /***/ },
 /* 23 */
+/***/ function(module, exports) {
+
+	module.exports = require("lodash");
+
+/***/ },
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1204,7 +1173,7 @@ module.exports =
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _CartCard = __webpack_require__(24);
+	var _CartCard = __webpack_require__(25);
 
 	var _CartCard2 = _interopRequireDefault(_CartCard);
 
@@ -1256,7 +1225,7 @@ module.exports =
 	exports.default = Basket;
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1338,7 +1307,7 @@ module.exports =
 	exports.default = CartCard;
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1357,7 +1326,7 @@ module.exports =
 
 	var _redux = __webpack_require__(8);
 
-	var _auth = __webpack_require__(26);
+	var _auth = __webpack_require__(27);
 
 	var _Button = __webpack_require__(10);
 
@@ -1461,7 +1430,7 @@ module.exports =
 	exports.default = (0, _reactRedux.connect)(stateToProps, dispatchToProps)(Login);
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1476,7 +1445,7 @@ module.exports =
 
 	var _axios2 = _interopRequireDefault(_axios);
 
-	var _auth = __webpack_require__(27);
+	var _auth = __webpack_require__(28);
 
 	var actions = _interopRequireWildcard(_auth);
 
@@ -1519,7 +1488,7 @@ module.exports =
 	}
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1536,7 +1505,7 @@ module.exports =
 	var USER_REGISTER_ERROR = exports.USER_REGISTER_ERROR = "USER_REGISTER_ERROR";
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1555,7 +1524,7 @@ module.exports =
 
 	var _redux = __webpack_require__(8);
 
-	var _auth = __webpack_require__(26);
+	var _auth = __webpack_require__(27);
 
 	var _Button = __webpack_require__(10);
 
@@ -1674,7 +1643,7 @@ module.exports =
 	exports.default = (0, _reactRedux.connect)(stateToProps, dispatchToProps)(Signup);
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1691,7 +1660,7 @@ module.exports =
 
 	var _reactRedux = __webpack_require__(7);
 
-	var _store = __webpack_require__(30);
+	var _store = __webpack_require__(31);
 
 	var _store2 = _interopRequireDefault(_store);
 
@@ -1714,7 +1683,7 @@ module.exports =
 	exports.default = App;
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1725,11 +1694,11 @@ module.exports =
 
 	var _redux = __webpack_require__(8);
 
-	var _reduxThunk = __webpack_require__(31);
+	var _reduxThunk = __webpack_require__(32);
 
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-	var _reducers = __webpack_require__(32);
+	var _reducers = __webpack_require__(33);
 
 	var _reducers2 = _interopRequireDefault(_reducers);
 
@@ -1744,13 +1713,13 @@ module.exports =
 	exports.default = initStore;
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports) {
 
 	module.exports = require("redux-thunk");
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1761,7 +1730,7 @@ module.exports =
 
 	var _redux = __webpack_require__(8);
 
-	var _products = __webpack_require__(33);
+	var _products = __webpack_require__(34);
 
 	var _products2 = _interopRequireDefault(_products);
 
@@ -1784,7 +1753,7 @@ module.exports =
 	exports.default = combinedReducer;
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1793,9 +1762,9 @@ module.exports =
 	  value: true
 	});
 
-	var _immutable = __webpack_require__(34);
+	var _immutable = __webpack_require__(35);
 
-	var _lodash = __webpack_require__(35);
+	var _lodash = __webpack_require__(23);
 
 	var _products = __webpack_require__(14);
 
@@ -1805,7 +1774,8 @@ module.exports =
 
 	var InitialState = new _immutable.Record({
 	  products: [],
-	  query: ''
+	  query: '',
+	  currentProduct: undefined
 	});
 
 	var initialState = new InitialState();
@@ -1815,6 +1785,11 @@ module.exports =
 	  var action = arguments[1];
 
 	  switch (action.type) {
+	    case actions.GET_PRODUCT_SUCCESS:
+	      {
+	        state = state.set('currentProduct', action.response.data);
+	        return state;
+	      }
 	    case actions.SET_PRODUCT_QUERY:
 	      {
 	        state = state.set('query', action.query);
@@ -1835,16 +1810,10 @@ module.exports =
 	exports.default = ProductReducer;
 
 /***/ },
-/* 34 */
-/***/ function(module, exports) {
-
-	module.exports = require("immutable");
-
-/***/ },
 /* 35 */
 /***/ function(module, exports) {
 
-	module.exports = require("lodash");
+	module.exports = require("immutable");
 
 /***/ },
 /* 36 */
@@ -1856,9 +1825,9 @@ module.exports =
 	  value: true
 	});
 
-	var _immutable = __webpack_require__(34);
+	var _immutable = __webpack_require__(35);
 
-	var _lodash = __webpack_require__(35);
+	var _lodash = __webpack_require__(23);
 
 	var _categories = __webpack_require__(19);
 
@@ -1901,11 +1870,11 @@ module.exports =
 	  value: true
 	});
 
-	var _immutable = __webpack_require__(34);
+	var _immutable = __webpack_require__(35);
 
-	var _lodash = __webpack_require__(35);
+	var _lodash = __webpack_require__(23);
 
-	var _auth = __webpack_require__(27);
+	var _auth = __webpack_require__(28);
 
 	var actions = _interopRequireWildcard(_auth);
 

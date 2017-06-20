@@ -9,17 +9,7 @@ class Layout extends Component {
   componentDidMount() {
     let loggedIn = localStorage.getItem('current_user');
     const path = this.props.location.pathname;
-    if (!loggedIn) {
-      switch (path) {
-        case '/login':
-        case 'login':
-        case 'sign_up':
-        case '/sign_up':
-          break;
-        default:
-          this.props.router.push('login');
-      }
-    } else {
+    if (loggedIn) {
       switch (path) {
         case '/login':
         case 'login':

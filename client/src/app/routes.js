@@ -12,7 +12,7 @@ module.exports = (
     path='/'
   >
     <IndexRoute component={Home} />
-    <Route path="product" component={Product} />
+    <Route path="product/:id" component={Product} />
     <Route path="cart" component={Basket} />
     <Route path='login' component={Login} />
     <Route path='sign_up' component={Signup} />

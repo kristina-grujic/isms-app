@@ -30013,7 +30013,8 @@
 
 	var InitialState = new _immutable.Record({
 	  products: [],
-	  query: ''
+	  query: '',
+	  currentProduct: undefined
 	});
 
 	var initialState = new InitialState();
@@ -30023,6 +30024,11 @@
 	  var action = arguments[1];
 
 	  switch (action.type) {
+	    case actions.GET_PRODUCT_SUCCESS:
+	      {
+	        state = state.set('currentProduct', action.response.data);
+	        return state;
+	      }
 	    case actions.SET_PRODUCT_QUERY:
 	      {
 	        state = state.set('query', action.query);
@@ -52130,6 +52136,10 @@
 	var GET_PRODUCTS_SUCCESS = exports.GET_PRODUCTS_SUCCESS = "GET_PRODUCTS_SUCCESS";
 	var GET_PRODUCTS_ERROR = exports.GET_PRODUCTS_ERROR = "GET_PRODUCTS_ERROR";
 
+	var GET_PRODUCT_START = exports.GET_PRODUCT_START = "GET_PRODUCT_START";
+	var GET_PRODUCT_SUCCESS = exports.GET_PRODUCT_SUCCESS = "GET_PRODUCT_SUCCESS";
+	var GET_PRODUCT_ERROR = exports.GET_PRODUCT_ERROR = "GET_PRODUCT_ERROR";
+
 	var SET_PRODUCT_QUERY = exports.SET_PRODUCT_QUERY = "SET_PRODUCT_QUERY";
 
 /***/ },
@@ -52301,7 +52311,7 @@
 	    path: '/'
 	  },
 	  _react2.default.createElement(_reactRouter.IndexRoute, { component: _index2.default }),
-	  _react2.default.createElement(_reactRouter.Route, { path: 'product', component: _index4.default }),
+	  _react2.default.createElement(_reactRouter.Route, { path: 'product/:id', component: _index4.default }),
 	  _react2.default.createElement(_reactRouter.Route, { path: 'cart', component: _index6.default }),
 	  _react2.default.createElement(_reactRouter.Route, { path: 'login', component: _index8.default }),
 	  _react2.default.createElement(_reactRouter.Route, { path: 'sign_up', component: _index10.default })
@@ -52357,17 +52367,7 @@
 	    value: function componentDidMount() {
 	      var loggedIn = localStorage.getItem('current_user');
 	      var path = this.props.location.pathname;
-	      if (!loggedIn) {
-	        switch (path) {
-	          case '/login':
-	          case 'login':
-	          case 'sign_up':
-	          case '/sign_up':
-	            break;
-	          default:
-	            this.props.router.push('login');
-	        }
-	      } else {
+	      if (loggedIn) {
 	        switch (path) {
 	          case '/login':
 	          case 'login':
@@ -52698,6 +52698,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.getProduct = getProduct;
 	exports.getProducts = getProducts;
 	exports.setQuery = setQuery;
 
@@ -52714,6 +52715,23 @@
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function getProduct(productId) {
+	  return function (dispatch) {
+	    dispatch({ type: actions.GET_PRODUCT_START });
+	    return (0, _axios2.default)({
+	      url: _config.apiEndpoint + '/product',
+	      method: 'get',
+	      params: {
+	        productId: productId
+	      }
+	    }).then(function (response) {
+	      dispatch({ type: actions.GET_PRODUCT_SUCCESS, response: response.data });
+	    }).catch(function (response) {
+	      dispatch({ type: actions.GET_PRODUCT_ERROR, error: response.error });
+	    });
+	  };
+	}
 
 	function getProducts() {
 	  var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
@@ -56624,10 +56642,11 @@
 	        'div',
 	        { className: 'cards' },
 	        this.props.products.map(function (product) {
+	          if (!product.category) return;
 	          return _react2.default.createElement(_Card2.default, {
 	            key: product.id,
 	            onClick: function onClick() {
-	              return _this2.props.router.push('product');
+	              return _this2.props.router.push('product/' + product.id);
 	            },
 	            product: product
 	          });
@@ -56737,7 +56756,7 @@
 /* 331 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -56748,6 +56767,14 @@
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(242);
+
+	var _redux = __webpack_require__(251);
+
+	var _lodash = __webpack_require__(283);
+
+	var _products = __webpack_require__(294);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -56767,173 +56794,103 @@
 	  }
 
 	  _createClass(Product, [{
-	    key: "render",
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      var _this2 = this;
+
+	      var id = this.props.location.pathname.split('/');
+	      id = id[id.length - 1];
+	      this.props.getProduct(id).then(function () {
+	        if (!_this2.props.currentProduct) {
+	          _this2.props.router.replace('/');
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'render',
 	    value: function render() {
+	      if (!this.props.currentProduct) {
+	        return _react2.default.createElement('div', { className: 'cards' });
+	      }
+	      var product = this.props.currentProduct;
 	      return _react2.default.createElement(
-	        "div",
-	        { className: "cards" },
+	        'div',
+	        { className: 'cards' },
 	        _react2.default.createElement(
-	          "div",
-	          { className: "main-card" },
+	          'div',
+	          { className: 'main-card' },
 	          _react2.default.createElement(
-	            "div",
-	            { className: "main-info-wrapper" },
-	            _react2.default.createElement("img", { src: "https://www.smashingmagazine.com/wp-content/uploads/2015/06/10-dithering-opt.jpg" }),
+	            'div',
+	            { className: 'main-info-wrapper' },
+	            _react2.default.createElement('img', { src: 'https://www.smashingmagazine.com/wp-content/uploads/2015/06/10-dithering-opt.jpg' }),
 	            _react2.default.createElement(
-	              "div",
+	              'div',
 	              null,
 	              _react2.default.createElement(
-	                "h3",
-	                { id: "title" },
-	                "Title of product"
+	                'h3',
+	                { id: 'title' },
+	                product.name
 	              ),
 	              _react2.default.createElement(
-	                "h2",
-	                { id: "price" },
-	                "Price in Euro"
+	                'h2',
+	                { id: 'price' },
+	                product.price
 	              ),
 	              _react2.default.createElement(
-	                "div",
-	                { className: "cart-button-wrapper" },
+	                'div',
+	                { className: 'cart-button-wrapper' },
 	                _react2.default.createElement(
-	                  "h5",
+	                  'h5',
 	                  null,
-	                  "Quantity"
+	                  'Quantity'
 	                ),
-	                _react2.default.createElement("input", { type: "number" }),
+	                _react2.default.createElement('input', { type: 'number' }),
 	                _react2.default.createElement(
-	                  "div",
-	                  { className: "button cart" },
+	                  'div',
+	                  { className: 'button cart' },
 	                  _react2.default.createElement(
-	                    "h3",
+	                    'h3',
 	                    null,
-	                    "Add to cart"
+	                    'Add to cart'
 	                  )
 	                )
 	              )
 	            )
 	          ),
 	          _react2.default.createElement(
-	            "div",
-	            { className: "detailed-info-wrapper" },
+	            'div',
+	            { className: 'detailed-info-wrapper' },
 	            _react2.default.createElement(
-	              "h3",
+	              'h3',
 	              null,
-	              "Description"
+	              'Description'
 	            ),
 	            _react2.default.createElement(
-	              "p",
+	              'p',
 	              null,
-	              "Short description Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+	              product.description || '/'
 	            ),
 	            _react2.default.createElement(
-	              "h3",
+	              'h3',
 	              null,
-	              "Details"
+	              'Details'
 	            ),
 	            _react2.default.createElement(
-	              "ul",
+	              'ul',
 	              null,
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "strong",
-	                  null,
-	                  "Size: "
-	                ),
-	                "40"
-	              ),
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "strong",
-	                  null,
-	                  "Producer: "
-	                ),
-	                "Veleproduct"
-	              ),
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "strong",
-	                  null,
-	                  "Size: "
-	                ),
-	                "40"
-	              ),
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "strong",
-	                  null,
-	                  "Producer: "
-	                ),
-	                "Veleproduct"
-	              ),
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "strong",
-	                  null,
-	                  "Size: "
-	                ),
-	                "40"
-	              ),
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "strong",
-	                  null,
-	                  "Producer: "
-	                ),
-	                "Veleproduct"
-	              ),
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "strong",
-	                  null,
-	                  "Size: "
-	                ),
-	                "40"
-	              ),
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "strong",
-	                  null,
-	                  "Producer: "
-	                ),
-	                "Veleproduct"
-	              ),
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "strong",
-	                  null,
-	                  "Size: "
-	                ),
-	                "40"
-	              ),
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "strong",
-	                  null,
-	                  "Producer: "
-	                ),
-	                "Veleproduct"
-	              )
+	              (0, _lodash.keys)(product.values).length ? null : '/',
+	              (0, _lodash.keys)(product.values).map(function (valueName) {
+	                return _react2.default.createElement(
+	                  'li',
+	                  { key: valueName },
+	                  _react2.default.createElement(
+	                    'strong',
+	                    null,
+	                    valueName + ': '
+	                  ),
+	                  product.values[valueName]
+	                );
+	              })
 	            )
 	          )
 	        )
@@ -56944,7 +56901,19 @@
 	  return Product;
 	}(_react.Component);
 
-	exports.default = Product;
+	function stateToProps(state) {
+	  return {
+	    currentProduct: state.products.currentProduct
+	  };
+	}
+
+	function dispatchToProps(dispatch) {
+	  return (0, _redux.bindActionCreators)({
+	    getProduct: _products.getProduct
+	  }, dispatch);
+	}
+
+	exports.default = (0, _reactRedux.connect)(stateToProps, dispatchToProps)(Product);
 
 /***/ },
 /* 332 */
