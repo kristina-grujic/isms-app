@@ -36,7 +36,7 @@ class Product extends Component {
                 {product.name}
               </h3>
               <h2 id='price'>
-                {product.price}
+                EUR { product.price || 0 }
               </h2>
               <div className='cart-button-wrapper'>
                 <h5>Quantity</h5>

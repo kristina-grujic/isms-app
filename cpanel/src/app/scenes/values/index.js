@@ -109,7 +109,7 @@ class Values extends Component {
 function stateToProps(state) {
   return {
     chosenCategory: state.categories.chosenCategory,
-    values: state.categories.chosenCategory ? state.categories.chosenCategory.values : [],
+    values: state.categories.chosenCategory ? state.categories.chosenCategory.values || [] : [],
     deleteError: state.values.deleteError,
   };
 }

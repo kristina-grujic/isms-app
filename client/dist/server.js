@@ -1114,7 +1114,11 @@ module.exports =
 	            _react2.default.createElement(
 	              'ul',
 	              null,
-	              (0, _lodash.keys)(product.values).length ? null : '/',
+	              (0, _lodash.keys)(product.values).length ? null : _react2.default.createElement(
+	                'li',
+	                null,
+	                '/'
+	              ),
 	              (0, _lodash.keys)(product.values).map(function (valueName) {
 	                return _react2.default.createElement(
 	                  'li',

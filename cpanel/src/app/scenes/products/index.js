@@ -16,9 +16,6 @@ class Products extends Component {
   }
 
   render() {
-    let products_to_render = filter(this.props.products, (product) => {
-      return !!product.category;
-    });
     return (
       <div className="cards">
         <h3>Products</h3>
@@ -36,7 +33,7 @@ class Products extends Component {
             </tr>
 
             {
-              products_to_render.length ?
+              this.props.products.length ?
                 null
                 :
                 <tr>
@@ -46,8 +43,7 @@ class Products extends Component {
                 </tr>
             }
             {
-              products_to_render.map((product) => {
-                if (!product.category) return;
+              this.props.products.map((product) => {
                 return (
                   <tr key={product.id}>
                     <td>{product.name}</td>

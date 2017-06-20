@@ -22,7 +22,7 @@ function CategoryReducer(state = initialState, action) {
     case valueActions.CREATE_VALUE_SUCCESS: {
       let categories = clone(state.categories);
       let chosenCategory = clone(state.chosenCategory);
-      let values = clone(chosenCategory.values);
+      let values = clone(chosenCategory.values || []);
       values.push(action.response.data);
       chosenCategory.values = values;
       categories = categories.map((category) => {

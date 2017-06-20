@@ -19,6 +19,7 @@ class renderModal extends Component {
       description: '',
       values: {},
       creating: false,
+      price: '',
       chosenCategory: undefined,
     };
     this.openModal = this.openModal.bind(this);
@@ -64,6 +65,7 @@ class renderModal extends Component {
           description: '',
           chosenCategory: undefined,
           values: {},
+          price: '',
         });
       })
   }
@@ -75,6 +77,7 @@ class renderModal extends Component {
       description: '',
       chosenCategory: undefined,
       values: {},
+      price: '',
     });
   }
 
@@ -85,6 +88,11 @@ class renderModal extends Component {
               onChange={(e) => this.setState({ name: e.target.value })}
               placeholder="Product name"
               type="text"
+            />
+            <input
+              onChange={(e) => this.setState({ price: e.target.value })}
+              placeholder="Price"
+              type="number"
             />
             {
               this.state.chosenCategory.values.map((value) => {
