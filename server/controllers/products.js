@@ -5,15 +5,19 @@ const getDecodedToken = require('./utils/getToken');
 
 exports.index = (req, res) => {
   const query = req.query.query || '';
+  const where = {
+    name: { $like: `%${query}%` },
+  };
+  if (req.query.categoryId) {
+    where.categoryId = req.query.categoryId;
+  }
   Product.findAll({
     include: [
       {
         model: sequelize.models.category,
       }
     ],
-    where: {
-      name: { $like: `%${query}%` },
-    }
+    where,
   })
     .then(data => res.status(200).json({ data }))
     .catch(error => res.status(500).json({ error }));
