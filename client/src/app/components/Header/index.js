@@ -16,7 +16,7 @@ class Header extends Component {
         <header className="header">
           <div className="header-searchbox">
             <h3 id="title">{ "WebShop" }</h3>
-            <SearchBox />
+            <SearchBox location={this.props.location} />
           </div>
           <div className="header-buttons">
             <FontAwesome name='shopping-basket'

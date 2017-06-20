@@ -21,7 +21,7 @@ export function getProduct(productId) {
   }
 }
 
-export function getProducts(query='') {
+export function getProducts(query='', categoryId: undefined) {
   return (dispatch) => {
     dispatch({ type: actions.GET_PRODUCTS_START });
     return axios({
@@ -29,6 +29,7 @@ export function getProducts(query='') {
       method: 'get',
       params: {
         query,
+        categoryId,
       }
     })
       .then((response) => {

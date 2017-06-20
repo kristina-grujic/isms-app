@@ -52303,6 +52303,10 @@
 
 	var _index10 = _interopRequireDefault(_index9);
 
+	var _index11 = __webpack_require__(337);
+
+	var _index12 = _interopRequireDefault(_index11);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	module.exports = _react2.default.createElement(
@@ -52312,6 +52316,7 @@
 	  },
 	  _react2.default.createElement(_reactRouter.IndexRoute, { component: _index2.default }),
 	  _react2.default.createElement(_reactRouter.Route, { path: 'product/:id', component: _index4.default }),
+	  _react2.default.createElement(_reactRouter.Route, { path: 'category/:id', component: _index12.default }),
 	  _react2.default.createElement(_reactRouter.Route, { path: 'cart', component: _index6.default }),
 	  _react2.default.createElement(_reactRouter.Route, { path: 'login', component: _index8.default }),
 	  _react2.default.createElement(_reactRouter.Route, { path: 'sign_up', component: _index10.default })
@@ -52496,7 +52501,7 @@
 	              { id: 'title' },
 	              "WebShop"
 	            ),
-	            _react2.default.createElement(_Searchbox2.default, null)
+	            _react2.default.createElement(_Searchbox2.default, { location: this.props.location })
 	          ),
 	          _react2.default.createElement(
 	            'div',
@@ -52642,14 +52647,35 @@
 	  _createClass(SearchBox, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      this.props.getProducts();
+	      var id = this.props.location.pathname.split('/');
+	      if (id.length > 2 && id[1] === 'category') {
+	        id = id[id.length - 1];
+	        this.props.getProducts('', id);
+	      } else {
+	        this.props.getProducts();
+	      }
 	    }
 	  }, {
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(nextProps) {
 	      if (this.props.query !== nextProps.query) {
 	        this.props = nextProps;
-	        this.props.getProducts(this.props.query);
+	        var id = this.props.location.pathname.split('/');
+	        if (id.length > 1) {
+	          id = id[id.length - 1];
+	          this.props.getProducts(this.props.query, id);
+	        } else {
+	          this.props.getProducts(this.props.query);
+	        }
+	      } else if (this.props.location.pathname !== nextProps.location.pathname) {
+	        this.props = nextProps;
+	        var _id = this.props.location.pathname.split('/');
+	        if (_id.length > 1) {
+	          _id = _id[_id.length - 1];
+	          this.props.getProducts(this.props.query, _id);
+	        } else {
+	          this.props.getProducts(this.props.query);
+	        }
 	      }
 	    }
 	  }, {
@@ -52735,6 +52761,7 @@
 
 	function getProducts() {
 	  var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+	  var categoryId = arguments[1];
 
 	  return function (dispatch) {
 	    dispatch({ type: actions.GET_PRODUCTS_START });
@@ -52742,7 +52769,8 @@
 	      url: _config.apiEndpoint + '/products',
 	      method: 'get',
 	      params: {
-	        query: query
+	        query: query,
+	        categoryId: categoryId
 	      }
 	    }).then(function (response) {
 	      dispatch({ type: actions.GET_PRODUCTS_SUCCESS, response: response.data });
@@ -56511,6 +56539,8 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
+	      var _this2 = this;
+
 	      if (this.props.location.pathname === '/cart') {
 	        return _react2.default.createElement('div', null);
 	      }
@@ -56524,7 +56554,11 @@
 	            return _react2.default.createElement(
 	              'li',
 	              {
-	                key: category.id
+	                key: category.id,
+	                onClick: function onClick(e) {
+	                  e.preventDefault();
+	                  _this2.props.router.push('category/' + category.id);
+	                }
 	              },
 	              _react2.default.createElement(
 	                'a',
@@ -56834,7 +56868,8 @@
 	              _react2.default.createElement(
 	                'h2',
 	                { id: 'price' },
-	                product.price
+	                'EUR ',
+	                product.price || 0
 	              ),
 	              _react2.default.createElement(
 	                'div',
@@ -57386,6 +57421,164 @@
 	}
 
 	exports.default = (0, _reactRedux.connect)(stateToProps, dispatchToProps)(Signup);
+
+/***/ },
+/* 337 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(242);
+
+	var _Card = __webpack_require__(338);
+
+	var _Card2 = _interopRequireDefault(_Card);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Home = function (_Component) {
+	  _inherits(Home, _Component);
+
+	  function Home() {
+	    _classCallCheck(this, Home);
+
+	    return _possibleConstructorReturn(this, (Home.__proto__ || Object.getPrototypeOf(Home)).apply(this, arguments));
+	  }
+
+	  _createClass(Home, [{
+	    key: 'render',
+	    value: function render() {
+	      var _this2 = this;
+
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'cards' },
+	        this.props.products.map(function (product) {
+	          if (!product.category) return;
+	          return _react2.default.createElement(_Card2.default, {
+	            key: product.id,
+	            onClick: function onClick() {
+	              return _this2.props.router.push('product/' + product.id);
+	            },
+	            product: product
+	          });
+	        })
+	      );
+	    }
+	  }]);
+
+	  return Home;
+	}(_react.Component);
+
+	function stateToProps(state) {
+	  return {
+	    products: state.products.products
+	  };
+	}
+
+	exports.default = (0, _reactRedux.connect)(stateToProps)(Home);
+
+/***/ },
+/* 338 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Card = function (_Component) {
+	  _inherits(Card, _Component);
+
+	  function Card() {
+	    _classCallCheck(this, Card);
+
+	    return _possibleConstructorReturn(this, (Card.__proto__ || Object.getPrototypeOf(Card)).apply(this, arguments));
+	  }
+
+	  _createClass(Card, [{
+	    key: "render",
+	    value: function render() {
+	      var product = this.props.product;
+
+	      return _react2.default.createElement(
+	        "div",
+	        { className: "card-wrapper",
+	          onClick: this.props.onClick
+	        },
+	        _react2.default.createElement(
+	          "div",
+	          { className: "card" },
+	          _react2.default.createElement(
+	            "div",
+	            { id: "image" },
+	            _react2.default.createElement("img", { src: "https://www.smashingmagazine.com/wp-content/uploads/2015/06/10-dithering-opt.jpg" }),
+	            _react2.default.createElement(
+	              "div",
+	              { className: "view-card-offer" },
+	              _react2.default.createElement(
+	                "h3",
+	                null,
+	                "View details..."
+	              )
+	            )
+	          ),
+	          _react2.default.createElement(
+	            "h3",
+	            { id: "title" },
+	            product.name
+	          ),
+	          _react2.default.createElement(
+	            "h2",
+	            { id: "price" },
+	            "EUR ",
+	            product.price || 0
+	          ),
+	          _react2.default.createElement(
+	            "p",
+	            null,
+	            product.description
+	          )
+	        )
+	      );
+	    }
+	  }]);
+
+	  return Card;
+	}(_react.Component);
+
+	exports.default = Card;
 
 /***/ }
 /******/ ]);
