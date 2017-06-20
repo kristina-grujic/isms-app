@@ -4,16 +4,17 @@ import * as actions from '../data/products';
 
 const InitialState = new Record({
   products: [],
+  createError: undefined,
+  editError: undefined,
+  deleteError: undefined,
 });
 
 const initialState = new InitialState;
 
 function ProductReducer(state = initialState, action) {
-  console.log(action);
   switch (action.type) {
     case actions.CREATE_PRODUCT_SUCCESS: {
       let products = clone(state.products);
-      console.log(action.response);
       products.push(action.response.data);
       state = state.set('products', products);
       return state;
@@ -44,6 +45,23 @@ function ProductReducer(state = initialState, action) {
     case actions.GET_PRODUCTS_SUCCESS: {
       state = state.set('products', action.response.data);
       return state;
+    }
+    case actions.DELETE_PRODUCT_START:
+    case actions.EDIT_PRODUCT_START:
+    case actions.CREATE_PRODUCT_START: {
+      state = state.set('createError', undefined);
+      state = state.set('editError', undefined);
+      state = state.set('deleteError', undefined);
+      return state;
+    }
+    case actions.CREATE_PRODUCT_ERROR: {
+      return state.set('createError', action.error);
+    }
+    case actions.EDIT_PRODUCT_ERROR: {
+      return state.set('editError', action.error);
+    }
+    case actions.DELETE_PRODUCT_ERROR: {
+      return state.set('deleteError', action.error);
     }
     default: {
       return state;

@@ -65,6 +65,12 @@ class Products extends Component {
                             this.props.deleteProduct({
                               productId: product.id,
                             })
+                              .then(() => {
+                                if (this.props.deleteError) {
+                                  alert('There was an error deleting product!');
+                                  return;
+                                }
+                              });
                           }
                         }}
 
@@ -88,6 +94,7 @@ class Products extends Component {
 function stateToProps(state) {
   return {
     products: state.products.products,
+    deleteError: state.products.deleteError,
   };
 }
 

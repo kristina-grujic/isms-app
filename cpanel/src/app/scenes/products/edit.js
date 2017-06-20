@@ -40,7 +40,11 @@ class renderModal extends Component {
     this.props.editProduct(product)
       .then(() => {
         this.setState({ creating: false });
-
+        if (this.props.editError) {
+          alert('There was an error Editing product!');
+          return;
+        }
+        this.closeModal();
       })
   }
 
@@ -170,7 +174,7 @@ class renderModal extends Component {
 function stateToProps(state) {
   return {
     categories: state.categories.categories,
-    createError: state.products.createError,
+    editError: state.products.editError,
   }
 }
 

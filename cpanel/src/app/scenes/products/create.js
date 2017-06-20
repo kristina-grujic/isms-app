@@ -39,7 +39,11 @@ class renderModal extends Component {
     this.props.createProduct(product)
       .then(() => {
         this.setState({ creating: false });
-
+        if (this.props.createError) {
+          alert('There was an error creating product!');
+          return;
+        }
+        this.closeModal();
       })
   }
 
