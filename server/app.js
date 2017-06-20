@@ -17,6 +17,7 @@ const sequelize = require('./config/sequelize');
 const helmet = require('helmet');
 const https = require('https');
 const fs = require('fs');
+const csrf = require('csurf');
 
 // const upload = multer();
 
@@ -40,6 +41,14 @@ const valuesController = require('./controllers/values');
  * Create Express server.
  */
 const app = express();
+
+
+app.use(csrf());
+
+app.use((req, res, next) => {
+  res.locals.csrftoken = req.csrfToken();
+  next();
+});
 
 /**
  * Express configuration.
