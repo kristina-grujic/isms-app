@@ -14,6 +14,7 @@ const expressValidator = require('express-validator');
 const expressStatusMonitor = require('express-status-monitor');
 const multer = require('multer');
 const sequelize = require('./config/sequelize');
+const helmet = require('helmet');
 
 const upload = multer();
 
@@ -41,6 +42,10 @@ const app = express();
 /**
  * Express configuration.
  */
+app.disable('x-powered-by');
+app.use(helmet.frameguard());
+app.use(helmet.noCache());
+
 app.set('port', process.env.PORT || 3000);
 app.use(expressStatusMonitor());
 app.use(compression());
@@ -60,9 +65,9 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Origin', '*'); // set to real domain in production
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization');
   next();
 });
 /**
