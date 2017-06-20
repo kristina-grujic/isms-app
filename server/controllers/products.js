@@ -2,7 +2,6 @@ const sequelize = require('../config/sequelize');
 const Product = require('../models/Product');
 const Category = require('../models/Category');
 const getDecodedToken = require('./utils/getToken');
-const { clone } = require('lodash');
 
 exports.index = (req, res) => {
   const query = req.query.query || '';
@@ -14,6 +13,25 @@ exports.index = (req, res) => {
     ],
     where: {
       name: { $like: `%${query}%` },
+    }
+  })
+    .then(data => res.status(200).json({ data }))
+    .catch(error => res.status(500).json({ error }));
+};
+
+exports.view = (req, res) => {
+  const query = req.query.productId;
+  if (!query) {
+    return res.status(400).json({ error: 'Invalid request' });
+  }
+  Product.find({
+    include: [
+      {
+        model: sequelize.models.category,
+      }
+    ],
+    where: {
+      id: query,
     }
   })
     .then(data => res.status(200).json({ data }))

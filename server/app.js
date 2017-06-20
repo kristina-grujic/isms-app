@@ -80,6 +80,7 @@ app.put('/categories', categoriesController.edit);
 app.delete('/categories', categoriesController.delete);
 // products routes
 app.get('/products', productsController.index);
+app.get('/product', productsController.view);
 app.post('/products', productsController.create);
 app.put('/products', productsController.edit);
 app.delete('/products', productsController.delete);
